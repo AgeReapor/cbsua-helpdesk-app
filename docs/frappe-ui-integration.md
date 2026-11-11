@@ -16,13 +16,15 @@ Inspection of the upstream Helpdesk `version-16` frontend confirms:
 - `desk/src/main.js` installs `FrappeUI` and imports the application's `index.css`.
 - `BrandLogo.vue` reads the Helpdesk config store and renders `config.brandLogo`, falling back to the Helpdesk logo.
 
+The supplied [Frappe Custom UI App reference](https://github.com/janakvaghela542/Frappe-Custom-UI-App) demonstrates conventional Frappe Desk hooks, public JS/CSS assets, and a custom settings DocType. Its README describes role-based Desk UI controls and ListView actions. Those are useful patterns for Desk-only extensions, but its hooks do not inject styles into Helpdesk's standalone Vue `/helpdesk` application. We will not install it as a dependency or copy its global overrides; we will keep CBSUA-specific extensions small and scoped.
+
 The current public Frappe UI documentation and its agent skill describe the newer 1.x API and semantic token conventions. These are design guidance, not proof that every current API exists in Helpdesk's pinned release candidate. Before using any newer component or prop, verify it against the exact installed package in the local Bench checkout.
 
 ## 2. Native Helpdesk branding — implemented
 
 Helpdesk `HD Settings` includes native fields `brand_name`, `brand_logo`, and `favicon`. Its public configuration method `helpdesk.api.config.get_config` returns these fields. The agent frontend's BrandLogo component uses the configured logo.
 
-The CBSUA app's `after_migrate` routine now fills these values only when blank:
+The CBSUA app fills these values only when blank, through both its `after_install` and `after_migrate` lifecycle hooks. The migration helper checks the live DocType schema, logs missing fields or skipped setup, and logs which defaults it applied. The fields are `Attach Image`/`Data` values in Helpdesk v16; the logo paths below are public app asset URLs:
 - `brand_name`: `CBSUA Helpdesk`
 - `brand_logo`: `/assets/cbsua_helpdesk/images/cbsua-logo.png`
 - `favicon`: `/assets/cbsua_helpdesk/images/cbsua-logo.png`
@@ -103,7 +105,9 @@ No custom ticket action is added in this M1 change because the current SRS does 
 ## 7. Verification plan
 
 ### Native branding
-- [ ] Run `bench migrate`.
+- [ ] Confirm the CBSUA app is installed on the site (`bench --site cbsua-helpdesk.localhost list-apps`).
+- [ ] Confirm Frappe resolves the CBSUA lifecycle hooks (`bench --site cbsua-helpdesk.localhost console`, then inspect `frappe.get_hooks('after_migrate', app_name='cbsua_helpdesk')`).
+- [ ] Run `bench migrate` and inspect the site log for the `cbsua_helpdesk` branding messages if values remain blank.
 - [ ] Confirm HD Settings contains the three CBSUA defaults if fields were previously blank.
 - [ ] Confirm existing administrator values are preserved on a second migration.
 - [ ] Confirm `/api/method/helpdesk.api.config.get_config` returns the configured values for an authenticated test site.
