@@ -89,14 +89,33 @@ def ensure_default_branding():
     if not frappe.db.exists("DocType", "HD Settings"):
         # Keep installation tolerant of app ordering mistakes; the normal
         # installation order installs Helpdesk before this extension.
+        frappe.logger("cbsua_helpdesk").warning(
+            "HD Settings DocType is not installed; skipped CBSUA branding defaults."
+        )
         return
 
+    # HD Settings is a Single DocType in Helpdesk v16. Check the live schema
+    # before writing so an upstream field rename is visible in the site log.
+    available_fields = set(frappe.get_meta("HD Settings").get_valid_columns())
     settings = frappe.get_single("HD Settings")
-    changed = False
+    changed_fields = []
     for fieldname, value in DEFAULT_BRANDING.items():
+        if fieldname not in available_fields:
+            frappe.logger("cbsua_helpdesk").warning(
+                "HD Settings is missing expected branding field: %s", fieldname
+            )
+            continue
         if not settings.get(fieldname):
             settings.set(fieldname, value)
-            changed = True
+            changed_fields.append(fieldname)
 
-    if changed:
+    if changed_fields:
         settings.save(ignore_permissions=True)
+        frappe.logger("cbsua_helpdesk").info(
+            "Applied default CBSUA HD Settings branding fields: %s",
+            ", ".join(changed_fields),
+        )
+    else:
+        frappe.logger("cbsua_helpdesk").info(
+            "CBSUA HD Settings branding defaults already populated or unavailable."
+        )
