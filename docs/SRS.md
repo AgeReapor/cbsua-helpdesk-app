@@ -219,3 +219,16 @@ Phase 1 is accepted when all Must requirements applicable to ICT pass documented
 ## 10. Requirement traceability
 
 Implementation tasks and tests should reference these requirement IDs. A requirement is not complete solely because a screen or configuration exists; it must have a test result and stakeholder acceptance.
+
+### 10.1 M1 implementation mapping (not acceptance evidence)
+
+| Requirement | Current implementation | Status |
+|---|---|---|
+| FR-08 | `CBSUA Service Office` plus the protected `cbsua_service_office` field on native `HD Ticket` | Implemented and migrated on the current development Site; clean-Site verification pending |
+| FR-09 | Office controller prevents future offices from being activated in M1 | Implemented and migrated; clean-Site verification pending |
+| FR-10 | One office catalogue maps offices to native Helpdesk Teams | Schema and mapping guard implemented; expansion not enabled |
+| FR-11 | New tickets are stamped with the sole active intake office and its native team | Implemented fail-closed; ICT team mapping is not configured |
+| FR-12 | Native `HD Ticket.agent_group` remains the team assignment field | Native capability reused; team/agent setup pending |
+| FR-36 / NFR-03 / NFR-04 / OQ-10 | Additional CBSUA list-query and document permission hooks | Implemented and migrated on the current development Site; security tests and review pending, not proven |
+
+All other functional requirements remain subject to approved configuration, validation, and stakeholder acceptance. The SRS does not define enough policy to implement ICT categories, required fields, priority targets, workflow transitions, staff scope, working calendars, or customer identity rules; resolve OQ-01 through OQ-08 before configuring those items. The app currently adds only the CBSUA Service Office custom DocType and one custom field to native HD Ticket. It deliberately does not duplicate Helpdesk tickets, teams, users/agents, ticket types, priorities, customers, or service-level agreements.

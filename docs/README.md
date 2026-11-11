@@ -24,6 +24,7 @@ The platform should be multi-office capable in its design, while only ICT is ena
 | [Decision Log](decisions.md) | Architectural decisions, assumptions, and items requiring validation |
 | [M0 Runbook](M0-runbook.md) | Local environment verification and acceptance checklist |
 | [M1 Configuration and Branding](M1-configuration-and-branding.md) | Office catalogue, native Helpdesk branding, tests, and rollback |
+| [Fresh Site test runbook](site-test-runbook.md) | Clean Frappe Site creation, app installation, migration, and verification |
 | [Frappe UI Integration](frappe-ui-integration.md) | Frappe UI compatibility findings, CBSUA design adaptation, Custom Actions guidance, and frontend verification plan |
 
 ## Documentation conventions

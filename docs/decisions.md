@@ -44,13 +44,15 @@ This log records decisions and decisions still requiring validation. Update it w
 
 ## ADR-005 — Office-level ticket authorization must be validated
 
-**Status:** Accepted as a requirement; implementation pending
+**Status:** Accepted; app-level implementation present, validation pending
 
 **Decision:** Agents and managers must be restricted to their authorized office/team scope, except explicitly authorized platform administrators.
 
 **Rationale:** Tickets may contain sensitive student, employee, or institutional information.
 
-**Validation:** Test list views, direct URLs, search, reports, attachments, comments, assignment, and manager functions using separate office accounts. Do not assume that team assignment alone guarantees complete data isolation.
+**Implementation:** The CBSUA app adds a protected office link to native HD Ticket and additional list/document checks for CBSUA-tagged tickets. The checks are layered with Helpdesk's native permissions; they do not alter the native policy for untagged tickets.
+
+**Validation:** Still required. Test list views, direct URLs, search, reports, attachments, comments, assignment, and manager functions using separate office accounts. Do not assume that team assignment alone guarantees complete data isolation.
 
 ## ADR-006 — Pin compatible Frappe and Helpdesk versions
 
@@ -105,7 +107,7 @@ ticket permissions.
 **Rationale:** Office onboarding and ticket access isolation are separate
 concerns. A configuration flag must not be mistaken for an authorization rule.
 
-**Consequences:** Ticket routing and office-scoped permissions remain pending.
+**Consequences:** Office activation does not provision teams or users. The M1 app now includes a fail-closed route and office-scoped permission hooks, but a real ICT team mapping and full isolation validation remain pending.
 Future offices cannot be activated until onboarding and isolation tests pass.
 
 
@@ -138,3 +140,13 @@ Future offices cannot be activated until onboarding and isolation tests pass.
 **Rationale:** Custom Actions are contextual Form Scripts with different supported functions on agent, customer, and new-ticket views. A client-side button is not an authorization boundary.
 
 **Consequences:** Any consequential action requires server-side permission validation, explicit customer-portal exposure review, and authorized/unauthorized tests. No custom action is introduced until a concrete workflow gap is approved.
+
+## ADR-014 — Map CBSUA offices to native Helpdesk teams
+
+**Status:** Accepted for M1; site configuration and verification pending
+
+**Decision:** Model the CBSUA service office as an app-owned `CBSUA Service Office` DocType and link it to one native `HD Team`. Add one protected CBSUA office link to native `HD Ticket`; keep tickets, teams, agents, customers, priorities, ticket types, and service levels in Helpdesk's own DocTypes. New tickets route through the only active intake office and fail closed when its team is missing or disabled.
+
+**Rationale:** The SRS identifies service office as CBSUA-specific metadata while Helpdesk already owns ticketing and team membership. Reusing the native records avoids split-brain data and makes office routing rely on the installed Helpdesk team model.
+
+**Consequences:** The ICT team and approved roster must be configured before ticket intake works. The current local site has only Product Experts and Billing teams; neither is an ICT substitute. Frappe v16 permission hooks are additive: the CBSUA controller hook must return true for out-of-scope tickets so Helpdesk's native ticket hook can decide access. Full office isolation remains unproven until the SRS access cases pass.

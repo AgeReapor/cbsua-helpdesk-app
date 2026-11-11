@@ -12,8 +12,8 @@ Deliver a complete, usable ICT ticketing service before onboarding other offices
 | WP-02 | Stakeholder requirements | Approved ICT categories, fields, priorities, workflow, customer access policy | ICT owner signs off |
 | WP-03 | Helpdesk configuration | CBSUA native HD Settings branding, portal settings, ticket templates and fields | Configuration reviewed |
 | WP-03a | Frappe UI adaptation | Version-pinned CBSUA theme integration using Helpdesk's existing Frappe UI stack | Agent and portal visual/accessibility tests pass; no duplicate UI dependency |
-| WP-04 | ICT queue and routing | ICT team, queue views, assignment configuration | Test tickets route correctly |
-| WP-05 | Identity and permissions | Admin, manager, agent setup and access policy | Permission tests pass |
+| WP-04 | ICT queue and routing | ICT team, queue views, assignment configuration | ICT team/roster configured; ticket routing tested |
+| WP-05 | Identity and permissions | Admin, manager, agent setup and access policy | Permission matrix approved; list and direct-access cases pass |
 | WP-06 | Ticket processing | Reply, internal comment, status, resolution and closure configuration | End-to-end workflow passes |
 | WP-07 | SLA and notifications | Approved ICT targets, calendars, and notification configuration | SLA/notification tests pass |
 | WP-08 | Reporting | ICT queue and performance views | ICT manager accepts reports |
@@ -42,6 +42,7 @@ Create issues from these work packages and link them to requirement IDs in `SRS.
 - [ ] Configure ICT team and queue views.
 - [ ] Configure manual assignment and evaluate automatic assignment.
 - [ ] Configure staff roles, invitations, and deactivation.
+- [ ] Configure the approved ICT Helpdesk Team and membership; map it to ICT in CBSUA Service Office.
 - [ ] Verify office/team ticket isolation.
 - [ ] Configure SLA, working hours, and notifications.
 - [ ] Configure ICT reports and workload views.

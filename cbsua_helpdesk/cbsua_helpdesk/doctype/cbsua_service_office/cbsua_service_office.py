@@ -33,3 +33,18 @@ class CBSUAServiceOffice(Document):
             frappe.throw(
                 _("Only ICT may be activated in M1. Future offices require an approved onboarding release.")
             )
+
+        if self.helpdesk_team:
+            duplicate = frappe.db.exists(
+                "CBSUA Service Office",
+                {"helpdesk_team": self.helpdesk_team, "name": ["!=", self.name]},
+            )
+            if duplicate:
+                frappe.throw(
+                    _("A Helpdesk Team can be mapped to only one CBSUA Service Office.")
+                )
+
+            if not frappe.db.exists("HD Team", self.helpdesk_team):
+                frappe.throw(_("Select an existing Helpdesk Team."))
+            if frappe.db.get_value("HD Team", self.helpdesk_team, "disabled"):
+                frappe.throw(_("The mapped Helpdesk Team must be enabled."))

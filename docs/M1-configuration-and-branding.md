@@ -1,23 +1,25 @@
 # M1 — CBSUA configuration foundation and branding
 
-**Status:** Native HD Settings branding, repeatable office seeding, a System Manager Workspace, and a version-pinned Helpdesk v16 theme entry are implemented in app source. Palette values follow the supplied design-system proposal and remain provisional pending official brand validation.
+**Status:** Native HD Settings branding, repeatable office seeding, a System Manager Workspace, and a version-pinned Helpdesk v16 theme entry are implemented. The app also contains office-to-team routing and scoped ticket permission hooks. The ICT team mapping and roster are not configured, and routing/isolation have not passed end-to-end verification; M1 is not operationally accepted. Palette values follow the supplied design-system proposal and remain provisional pending official brand validation.
 
 **Branch:** develop  
 **Scope:** Institutional identity, office catalogue metadata, and safe Phase 1 defaults.
 
 ## 1. Requirements basis
 
-Aligned requirements and decisions: FR-09 (ICT-only Phase 1 destination), FR-10 (reusable office model), NFR-06 through NFR-08 (extensibility, minimal custom code, documented/testing), and ADR-001/003/004. The native Frappe Helpdesk ticket engine remains authoritative.
+Aligned requirements and decisions: FR-08 through FR-12 (office association, ICT-only Phase 1, reusable office mapping, and team routing), NFR-03/04/06/07/08, and ADR-001/003/004/005/010. The native Frappe Helpdesk ticket engine remains authoritative.
 
-M1 does not complete ticket routing, agent/team authorization, customer intake, or cross-office isolation. These remain separate requirements and must be implemented and tested before operational use.
+The implementation covers the office catalogue, an office link on native tickets, fail-closed routing to a mapped native team, and an additional team membership check for CBSUA tickets. This is a source-level implementation, not proof of authorization correctness. Team provisioning, customer identity policy, ticket lifecycle choices, and end-to-end isolation validation remain open before operational use.
 
 ## 2. Components
 
 | Path | Responsibility |
 |---|---|
 | cbsua_helpdesk/cbsua_helpdesk/doctype/cbsua_service_office/ | Office catalogue DocType and validation controller |
-| cbsua_helpdesk/setup/install.py | Idempotent creation of baseline office records |
+| cbsua_helpdesk/setup/install.py | Idempotent office records, native branding defaults, and the CBSUA Service Office custom field on HD Ticket |
 | cbsua_helpdesk/migrate.py | Additive seed routine after migration |
+| cbsua_helpdesk/ticket_routing.py | Server-side office and native HD Team stamping/consistency checks |
+| cbsua_helpdesk/permissions.py | Additional list-query and document permission checks for CBSUA-tagged tickets |
 | cbsua_helpdesk/public/css/cbsua_brand.css | Conservative institutional palette overrides |
 | cbsua_helpdesk/public/css/cbsua_helpdesk.css | Semantic-token overrides for the Helpdesk Vue app |
 | cbsua_helpdesk/public/images/cbsua-logo.png | Official CBSUA logo asset supplied to the project |
@@ -25,7 +27,7 @@ M1 does not complete ticket routing, agent/team authorization, customer intake, 
 | scripts/integrate_helpdesk_branding.py | Idempotent integration of the stylesheet in the pinned Helpdesk v16 page shell |
 | tests/test_configuration.py | Hook registration, branding defaults/preservation, repeatable migration seeding, missing-schema diagnostics, and office activation-gate tests |
 
-CBSUA Service Office is configuration metadata only. It is not a Helpdesk Team, ticket, assignment rule, route, or permission boundary.
+`CBSUA Service Office` is the one CBSUA-specific entity defined clearly enough in the current SRS to model as a custom DocType. It maps an office code to a native Helpdesk Team. Tickets, teams, agents, customers, ticket types, priorities, and service-level agreements continue to use native Helpdesk DocTypes; do not create duplicate CBSUA versions of them. Ticket categories, required fields, priorities, and SLA targets remain pending ICT decisions (OQ-03/OQ-04/OQ-07).
 
 ## 3. Office catalogue defaults
 
@@ -38,6 +40,16 @@ CBSUA Service Office is configuration metadata only. It is not a Helpdesk Team, 
 
 The controller rejects activation of a non-ICT office and rejects customer intake for inactive offices. This is a configuration guard, not a replacement for Frappe permissions.
 
+## 4. Ticket association and routing
+
+The migration adds a read-only `cbsua_service_office` Link field to native `HD Ticket` at the same protected permission level as the native team field. The server-side `before_validate` hook assigns new tickets to the only active office with customer intake enabled and stamps its mapped native `HD Team` into `agent_group`. Existing tickets keep their office/team association; a CBSUA ticket cannot be saved after its office mapping is removed or its team is changed. A Helpdesk Team can map to only one CBSUA Service Office.
+
+Ticket creation fails closed unless exactly one intake-enabled office exists and its team mapping points to an existing, enabled Helpdesk Team. The current site has no ICT Helpdesk Team, so the seeded ICT office cannot accept tickets until an administrator creates the ICT team, provisions its approved agents, maps it in **CBSUA Helpdesk → CBSUA Service Office**, and confirms the office/team configuration. Do not point ICT at the existing Product Experts or Billing teams.
+
+For list queries, the CBSUA permission hook narrows CBSUA-tagged tickets to a mapped team the agent belongs to. For direct document access it denies agents who are not members of the ticket's mapped team. Tickets outside the CBSUA field remain governed by Helpdesk. The hook returns `True` for those unaffected tickets so the installed Helpdesk controller hook still makes the native decision; in Frappe's controller permission chain, a single false result denies access. Both native and CBSUA list-query hooks are applied. These rules still need tests for list, direct URL, search, report, assignment, comments, and attachments before this is called isolation proof.
+
+This uses Frappe's [DocType](https://docs.frappe.io/framework/user/en/tutorial/create-a-doctype), [controller methods](https://docs.frappe.io/framework/user/en/tutorial/controller-methods), and [hooks](https://docs.frappe.io/framework/user/en/python-api/hooks) extension points, and Helpdesk's native [team restriction settings](https://docs.frappe.io/helpdesk/settings) model. See ADR-014 for the compatibility rationale.
+
 The install and migration hooks both invoke the idempotent seed routine. In `hooks.py`, `after_migrate` and `after_install` are declared as dotted Python paths, matching Frappe's documented hook contract. It validates the live HD Settings schema and writes diagnostic messages to the site log if the DocType or expected fields are unavailable. The migration seed is additive and idempotent. Existing records are not silently overwritten on later migrations. Review and correct manually changed records explicitly.
 
 The Frappe app tests cover hook discovery, repeatable office/branding seeds, and safe handling of missing Helpdesk settings fields. The WSL site has now been migrated from the current app source; the CBSUA Workspace, its System Manager role, office link, and theme stylesheet response were verified in the local site. Full browser visual/accessibility review remains outstanding.
@@ -48,7 +60,7 @@ Earlier inspection found the WSL app at `0e6e718` without lifecycle hook declara
 
 The Workspace is seeded additively from the app-owned definition file; migrations do not overwrite an existing administrator-edited Workspace. References: [Frappe hooks documentation](https://docs.frappe.io/framework/user/en/python-api/hooks) and [Frappe v16 migration source](https://github.com/frappe/frappe/blob/version-16/frappe/migrate.py).
 
-## 4. Branding palette
+## 5. Branding palette
 
 The earlier scaffold palette was sampled from the supplied CBSUA seal. The supplied CBSUA Digital Design System v0.1.0 now proposes the following semantic palette for application UI. These values are provisional and must not be presented as institutionally approved until checked against official brand guidance:
 
@@ -75,7 +87,7 @@ The CBSUA app registers standard Desk and website assets through hooks. Helpdesk
 
 The official `cbsua-logo.png` is stored at `cbsua_helpdesk/public/images/cbsua-logo.png`. Frappe app metadata, website branding hooks, and the new HD Settings defaults reference this asset. The migration only fills empty HD Settings fields and preserves administrator choices. The Helpdesk Vue app reads its logo from the native config response. A full theme/color integration still requires a source-level, version-pinned stylesheet patch; see [Frappe UI integration](frappe-ui-integration.md). Preserve the supplied logo as-is.
 
-## 5. Installation and verification
+## 6. Installation and verification
 
 From the Frappe Bench root:
 
@@ -85,6 +97,7 @@ bench build --app helpdesk --app cbsua_helpdesk
 python /path/to/cbsua-helpdesk-app/scripts/integrate_helpdesk_branding.py /path/to/frappe-bench
 bench --site cbsua-helpdesk.localhost clear-cache
 bench --site cbsua-helpdesk.localhost clear-website-cache
+# Stop the existing `bench start` process with Ctrl+C, then start it again.
 bench start
 ~~~
 
@@ -94,21 +107,21 @@ Run tests:
 bench --site cbsua-helpdesk.localhost run-tests --app cbsua_helpdesk
 ~~~
 
-After migration, open the **CBSUA Helpdesk** Workspace from the Desk sidebar and select **CBSUA Service Office**. The workspace is restricted to System Manager. Confirm ICT is active with intake enabled and all future offices are inactive with intake disabled. Attempting to activate a future office should produce a validation error.
+After migration, open the **CBSUA Helpdesk** Workspace from the Desk sidebar and select **CBSUA Service Office**. The workspace is restricted to System Manager. Confirm ICT is active with intake enabled and all future offices are inactive with intake disabled. Configure the ICT office's native Helpdesk Team only after its team and agent roster are approved. Attempting to activate a future office should produce a validation error.
 
 Inspect the Helpdesk config response and verify the logo/favicon URLs return HTTP 200. Confirm the agent interface displays the configured logo and the CBSUA theme stylesheet loads after Helpdesk's compiled stylesheet. Re-run the integration script after replacing or upgrading the Helpdesk v16 app, then rebuild and clear caches. It refuses unexpected page templates without changing them.
 
-## 6. Rollback
+## 7. Rollback
 
 1. Back up the local site before migration if it contains data that matters.
 2. To remove the native Helpdesk branding defaults, clear or replace the HD Settings fields manually. To remove Desk/website styles, remove the corresponding hooks from hooks.py, then rebuild and clear caches. The migration does not force values back after an administrator changes them.
 3. Do not delete office catalogue records after later configuration references them.
 4. Production rollback requires a reviewed backup and code release; do not manually drop DocType tables.
 
-## 7. Frappe UI and Custom Actions
+## 8. Frappe UI and Custom Actions
 
 Helpdesk `version-16` already uses Frappe UI. CBSUA adapts the existing UI rather than adding another frontend dependency. The app-owned stylesheet and guarded template integration provide the first visual theme layer; Helpdesk Custom Actions are ticket-page Form Scripts, not global theme hooks. Add them only for a specific approved ticket workflow gap and include server-side authorization checks. See [frappe-ui-integration.md](frappe-ui-integration.md).
 
-## 8. Not implemented in M1
+## 9. Remaining M1 work and exclusions
 
-HD Team provisioning and membership; ticket office field/routing/automatic assignment; office-scoped permission_query_conditions or has_permission overrides; customer identity policy (OQ-01); ICT categories, SLA, calendars, notifications, and reports; future office activation. These omissions are deliberate. Prove ticket access isolation before onboarding additional offices or entering real institutional ticket data.
+Not complete: ICT team and agent provisioning; routing configuration on the site; customer identity policy (OQ-01); intake channel decision (OQ-02); ICT categories (OQ-03); priorities and service targets (OQ-04); status and closure rules (OQ-05); role matrix (OQ-06); working calendar (OQ-07); data/attachment and retention policy (OQ-08); and full access-isolation evidence (OQ-10). Automatic assignment, notifications, reporting, and future-office onboarding are also not configured. Do not treat the current hooks as production-ready authorization proof.

@@ -60,13 +60,29 @@ DEFAULT_OFFICES = (
     },
 )
 
+TICKET_OFFICE_FIELD = {
+    "doctype": "Custom Field",
+    "name": "HD Ticket-cbsua_service_office",
+    "dt": "HD Ticket",
+    "fieldname": "cbsua_service_office",
+    "label": "CBSUA Service Office",
+    "fieldtype": "Link",
+    "options": "CBSUA Service Office",
+    "insert_after": "agent_group",
+    "permlevel": 7,
+    "read_only": 1,
+    "in_list_view": 1,
+    "in_standard_filter": 1,
+    "description": "Assigned by the CBSUA office routing rule; not customer-selectable.",
+}
+
 
 def ensure_default_offices():
     """Create missing office catalogue rows without changing existing rows.
 
     This method is safe to call repeatedly from after_migrate. It does not
-    create Helpdesk Teams, users, assignments, routes, or customer-facing
-    forms. The office catalogue is configuration metadata only at this stage.
+    create Helpdesk Teams, users, assignments, or customer-facing forms. Team
+    mapping and membership require explicit administrator configuration.
     """
     for office in DEFAULT_OFFICES:
         if frappe.db.exists("CBSUA Service Office", office["office_code"]):
@@ -102,6 +118,19 @@ def ensure_default_workspace():
 
     workspace = json.loads(workspace_file.read_text(encoding="utf-8"))
     frappe.get_doc(workspace).insert(ignore_permissions=True)
+
+
+def ensure_ticket_office_field():
+    """Add the app-owned office link to Helpdesk's native ticket DocType."""
+    field_name = TICKET_OFFICE_FIELD["name"]
+    if frappe.db.exists("Custom Field", field_name):
+        return
+    if not frappe.db.exists("DocType", "HD Ticket"):
+        frappe.logger("cbsua_helpdesk").warning(
+            "HD Ticket DocType is missing; skipped CBSUA office field setup."
+        )
+        return
+    frappe.get_doc(TICKET_OFFICE_FIELD).insert(ignore_permissions=True)
 
 
 def ensure_default_branding():

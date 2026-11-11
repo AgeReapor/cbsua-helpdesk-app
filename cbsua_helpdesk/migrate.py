@@ -1,14 +1,15 @@
 """CBSUA migration lifecycle helpers.
 
-The after_migrate hook seeds the small Service Office catalogue. Seeding is
-idempotent and additive; it does not modify existing records, create Helpdesk
-Teams, configure routes, or change ticket permissions.
+The after_migrate hook seeds missing Service Office records and branding
+defaults, creates the app-owned office field on HD Ticket, and seeds the
+workspace. It does not provision Helpdesk Teams or users.
 """
 
 from cbsua_helpdesk.setup.install import (
     ensure_default_branding,
     ensure_default_offices,
     ensure_default_workspace,
+    ensure_ticket_office_field,
 )
 
 
@@ -20,6 +21,7 @@ def after_install():
     ensure_default_offices()
     ensure_default_branding()
     ensure_default_workspace()
+    ensure_ticket_office_field()
 
 
 def after_migrate():
@@ -30,3 +32,4 @@ def after_migrate():
     ensure_default_offices()
     ensure_default_branding()
     ensure_default_workspace()
+    ensure_ticket_office_field()

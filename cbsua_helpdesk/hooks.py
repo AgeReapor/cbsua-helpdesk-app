@@ -1,8 +1,8 @@
 """Frappe hooks for the CBSUA Helpdesk extension.
 
-The hooks in this file are intentionally additive. Frappe Helpdesk remains the
-owner of ticket lifecycle, ticket permissions, agent UI, and customer workflow.
-CBSUA contributes institutional metadata and conservative brand assets only.
+Helpdesk remains the owner of ticket lifecycle, native team permissions, agent
+UI, and customer workflow. CBSUA adds office metadata and narrowly scoped
+routing and permission checks for tickets linked to CBSUA Service Offices.
 """
 
 app_name = "cbsua_helpdesk"
@@ -41,3 +41,21 @@ after_migrate = "cbsua_helpdesk.migrate.after_migrate"
 
 # Helpdesk is installed before this extension, so HD Settings exists here.
 after_install = "cbsua_helpdesk.migrate.after_install"
+
+# Route new Helpdesk tickets through the active CBSUA office-to-team mapping.
+# The Helpdesk ticket engine and its native team/assignment permissions remain
+# authoritative; this hook only stamps the office and selected team.
+doc_events = {
+    "HD Ticket": {
+        "before_validate": "cbsua_helpdesk.ticket_routing.route_ticket_to_office",
+    }
+}
+
+# Restrict only CBSUA-tagged tickets. Non-CBSUA Helpdesk tickets continue to
+# follow their existing Helpdesk permissions and team rules.
+permission_query_conditions = {
+    "HD Ticket": "cbsua_helpdesk.permissions.get_hd_ticket_query_conditions",
+}
+has_permission = {
+    "HD Ticket": "cbsua_helpdesk.permissions.has_hd_ticket_permission",
+}

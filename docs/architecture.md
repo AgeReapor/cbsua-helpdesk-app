@@ -154,6 +154,7 @@ For Phase 1, the customer intake experience must not expose future office destin
 
 ```mermaid
 erDiagram
+    SERVICE_OFFICE ||--|| TEAM : maps_to
     USER ||--o{ TEAM_MEMBER : joins
     TEAM ||--o{ TEAM_MEMBER : includes
     TEAM ||--o{ HD_TICKET : receives
@@ -161,6 +162,7 @@ erDiagram
     CUSTOMER ||--o{ CONTACT : has
     CONTACT ||--o{ HD_TICKET : requester
     SLA_POLICY ||--o{ HD_TICKET : applies_to
+    SERVICE_OFFICE ||--o{ HD_TICKET : classifies
 
     USER {
         string id
@@ -201,9 +203,16 @@ erDiagram
         string response_target
         string resolution_target
     }
+    SERVICE_OFFICE {
+        string office_code
+        string office_name
+        string helpdesk_team
+        boolean is_active
+        boolean allow_customer_intake
+    }
 ```
 
-This model is conceptual only. It is not a statement of exact Helpdesk database schema. The implementation must inspect the selected release's DocTypes and use native fields wherever possible. `office_code` may be a custom field or a value derived from an approved team-to-office mapping. Avoid duplicating native records.
+This model is conceptual only. It is not a statement of exact Helpdesk database schema. The implementation stores `cbsua_service_office` as an app-owned custom field on native `HD Ticket`, and links the custom `CBSUA Service Office` record to one native `HD Team`. Avoid duplicating native records.
 
 ## 7. Authorization boundary
 
