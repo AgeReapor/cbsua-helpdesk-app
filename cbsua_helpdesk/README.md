@@ -54,7 +54,7 @@ These fields are catalogue metadata only. They do not create Helpdesk Teams, rou
 
 ## 4. Native Helpdesk branding defaults
 
-The app's `after_install` and `after_migrate` hooks call `ensure_default_branding()`. It fills blank `HD Settings` fields only:
+The app's `after_install` and `after_migrate` hooks call `ensure_default_branding()`. Both are registered in `hooks.py` as dotted Python paths (the documented Frappe convention); `after_migrate` is a single dotted path, not a custom list declaration. It fills blank `HD Settings` fields only:
 
 | HD Settings field | Default |
 |---|---|
