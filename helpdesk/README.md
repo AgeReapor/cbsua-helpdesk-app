@@ -177,3 +177,14 @@ ICT intake, routing, authorization, ticket processing, and reporting.
 Do not create a duplicate Ticket DocType or replace the native Helpdesk
 lifecycle. Keep changes minimal, documented, tested, and compatible with the
 pinned Frappe/Helpdesk versions.
+
+
+## 11. M1 CBSUA extension
+
+The M1 CBSUA extension and office catalogue are documented in
+[M1-setup.md](M1-setup.md). This is a separate app from upstream Helpdesk.
+Apply the migration and run the CBSUA app tests after updating the develop
+branch. The office catalogue is metadata only; it does not route tickets or
+grant office access. ICT is the only active office; future offices remain
+disabled. The current SVG brand mark is explicitly temporary and is not the
+official full seal.
