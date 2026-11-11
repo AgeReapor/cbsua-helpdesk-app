@@ -2,7 +2,7 @@
 
 CBSUA-specific extension app for [Frappe Helpdesk](https://github.com/frappe/helpdesk).
 
- > **Current status:** M1 foundation in progress. The repository contains the installable CBSUA Frappe extension, local setup documentation, an initial institutional branding layer, and an office configuration catalogue. It does not replace Frappe Helpdesk; ticket routing, office-level authorization, and the Phase 1 ticket workflow remain future implementation work.
+> **Current status:** M1 foundation in progress. The repository contains the installable CBSUA Frappe extension, local setup documentation, an initial institutional branding layer, and an office configuration catalogue. It does not replace Frappe Helpdesk; ticket routing, office-level authorization, and the Phase 1 ticket workflow remain future implementation work.
 
 ## 1. What you are installing
 
