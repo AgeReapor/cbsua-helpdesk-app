@@ -24,9 +24,13 @@ The CBSUA Service Office DocType is a CBSUA metadata catalogue. It does not crea
 
 ## Branding integration boundary
 
-The CBSUA app uses Frappe's documented app_include_css and web_include_css hooks to add a restrained palette to Desk and portal pages. The CSS does not modify upstream source files. The Helpdesk agent interface is a Vue application; CSS variables and framework-level selectors are deliberately conservative. A full replacement of Vue component branding requires a separate version-pinned frontend integration and visual regression tests, not broad CSS overrides.
+The CBSUA app uses Frappe's Desk and website hooks only for those surfaces. The standalone `/helpdesk/` agent application is a Vue/Vite frontend and does not automatically load these hooks. Helpdesk `version-16` already uses `frappe-ui`; CBSUA should adapt that existing dependency rather than add a duplicate. The CBSUA migration now fills blank HD Settings brand fields (`brand_name`, `brand_logo`, `favicon`) with the official logo asset path.
 
-The supplied official PNG is referenced by Frappe branding hooks. The standalone Helpdesk Vue agent interface still requires a separate frontend integration. See docs/M1-configuration-and-branding.md for asset status, palette rationale, verification, and rollback.
+The official PNG is referenced by native HD Settings defaults as well as Frappe branding metadata. This should display the logo in the Helpdesk surfaces that consume the native config. Full green/gold component theming still needs a version-pinned source stylesheet integration. See [Frappe UI integration](../docs/frappe-ui-integration.md) and [M1 configuration](../docs/M1-configuration-and-branding.md).
+
+## Custom Actions
+
+Helpdesk Custom Actions are ticket-specific Form Scripts configured through HD Form Script. They are not a global navigation or branding extension point. Add one only when an approved SRS workflow gap requires it, and always enforce permissions on the server side. See the official [Custom Actions documentation](https://docs.frappe.io/helpdesk/custom-actions) and the integration decision in `../docs/frappe-ui-integration.md`.
 
 ## Important limitations
 
