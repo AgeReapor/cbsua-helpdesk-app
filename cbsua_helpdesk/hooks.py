@@ -20,12 +20,12 @@ app_include_css = ["/assets/cbsua_helpdesk/css/cbsua_brand.css"]
 web_include_css = ["/assets/cbsua_helpdesk/css/cbsua_brand.css"]
 
 # Used by Frappe app metadata surfaces and the standard website navbar.
-# This SVG is a temporary compact mark, not a replacement for the official
-# full university seal. See docs/M1-configuration-and-branding.md.
-app_logo_url = "/assets/cbsua_helpdesk/images/cbsua-brand-mark.svg"
+# The supplied official seal is used here; the standalone Helpdesk Vue frontend
+# requires its own version-pinned integration for in-app logo replacement.
+app_logo_url = "/assets/cbsua_helpdesk/images/cbsua-logo.png"
 brand_html = (
     '<a class="navbar-brand" href="/" aria-label="CBSUA Helpdesk">'
-    '<img src="/assets/cbsua_helpdesk/images/cbsua-brand-mark.svg" '
+    '<img src="/assets/cbsua_helpdesk/images/cbsua-logo.png" '
     'alt="" style="height:28px;width:28px;margin-right:8px;">'
     '<span>CBSUA Helpdesk</span></a>'
 )
