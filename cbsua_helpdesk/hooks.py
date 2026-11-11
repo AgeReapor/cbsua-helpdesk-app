@@ -35,4 +35,8 @@ brand_html = (
 
 # Additive, repeatable catalogue seed. This runs after DocTypes are synced by
 # migrate, so the Service Office table exists before records are inserted.
-after_migrate = "cbsua_helpdesk.migrate.after_migrate"
+# Frappe v16 resolves migration hooks as ordered dotted-path lists.
+after_migrate = ["cbsua_helpdesk.migrate.after_migrate"]
+
+# Helpdesk is installed before this extension, so HD Settings exists here.
+after_install = "cbsua_helpdesk.migrate.after_install"
