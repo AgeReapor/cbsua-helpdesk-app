@@ -54,7 +54,7 @@ These fields are catalogue metadata only. They do not create Helpdesk Teams, rou
 
 ## 4. Native Helpdesk branding defaults
 
-The app's `after_migrate` hook calls `ensure_default_branding()`. It fills blank `HD Settings` fields only:
+The app's `after_install` and `after_migrate` hooks call `ensure_default_branding()`. It fills blank `HD Settings` fields only:
 
 | HD Settings field | Default |
 |---|---|
@@ -62,7 +62,7 @@ The app's `after_migrate` hook calls `ensure_default_branding()`. It fills blank
 | `brand_logo` | `/assets/cbsua_helpdesk/images/cbsua-logo.png` |
 | `favicon` | `/assets/cbsua_helpdesk/images/cbsua-logo.png` |
 
-Helpdesk's `helpdesk.api.config.get_config` endpoint exposes these settings and the Vue `BrandLogo.vue` component consumes the configured logo. The migration preserves any non-empty values selected by an administrator.
+In Helpdesk v16, `brand_logo` and `favicon` are `Attach Image` fields and `brand_name` is a `Data` field. The public app asset URLs below are stored as their values. Helpdesk's `helpdesk.api.config.get_config` endpoint exposes these settings and the Vue `BrandLogo.vue` component consumes the configured logo. The seed checks the live DocType schema, logs skipped/missing fields, and preserves any non-empty values selected by an administrator. If the fields remain blank after migration, verify the app is installed and that `frappe.get_hooks('after_migrate', app_name='cbsua_helpdesk')` includes the CBSUA migration method; then inspect the site log for `cbsua_helpdesk` messages.
 
 To change branding manually, open Helpdesk's **HD Settings → Branding** and select or enter the appropriate asset path according to the installed Helpdesk field behavior. If an administrator changes the settings, later migrations will not force the defaults back.
 
@@ -119,7 +119,11 @@ Then restart `bench start` and hard-refresh the browser.
 
 Local runtime verification is environment-specific. A successful GitHub commit does not mean the user's local Bench migration, frontend build, or tests have already run.
 
-## 8. Related documentation
+## 8. Reference evaluation
+
+The [Frappe Custom UI App](https://github.com/janakvaghela542/Frappe-Custom-UI-App) is a useful example of a conventional Frappe extension: app hooks, public assets, and a custom settings DocType. Its documented features target Frappe Desk (role-based field visibility, ListView actions, and reusable Desk UI extensions). It is not a direct theme plugin for Helpdesk's standalone Vue agent app, so CBSUA does not add it as a dependency. We will use scoped patterns only where they fit the actual surface being customized.
+
+## 9. Related documentation
 
 - [Project documentation index](../docs/README.md)
 - [M1 configuration and branding](../docs/M1-configuration-and-branding.md)
