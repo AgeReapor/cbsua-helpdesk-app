@@ -416,4 +416,40 @@ Do not manually insert app records into the database to work around an installat
 - [ ] Prove office-level access isolation
 - [ ] Build and test the Docker image and deployment stack
 
+
+## 10. M0 local baseline — current implementation
+
+M0 is the first engineering milestone: verify that the local Frappe/Helpdesk
+stack is healthy before implementing CBSUA-specific workflows. It is a
+verification milestone, not a claim that the ICT MVP or production deployment
+is complete.
+
+Start with these repository resources:
+
+- [Helpdesk setup and M0 verification guide](helpdesk/README.md) — agent and
+  customer URLs, Administrator login, frontend asset troubleshooting, tests,
+  and the local smoke-test checklist.
+- [M0 runbook](docs/M0-runbook.md) — diagnostic procedure, acceptance criteria,
+  and explicit scope boundaries.
+- [Read-only diagnostic script](scripts/diagnose_m0.sh) — checks versions,
+  installed apps, local service status, expected directories, and asset
+  directory presence from the Bench root.
+
+Example diagnostic invocation (run from the Bench root):
+
+```bash
+bash /path/to/cbsua-helpdesk-app/scripts/diagnose_m0.sh cbsua-helpdesk.localhost
+```
+
+The script does not modify the environment. Its output is diagnostic evidence,
+not an automated pass/fail certification. Browser asset delivery must still
+be checked in Developer Tools, and the M0 smoke-test checklist must be
+completed on the actual local machine.
+
+**M0 status:** documentation and a read-only diagnostic helper are committed.
+The local environment has not been independently inspected or tested by this
+repository change. Mark M0 verified only after the acceptance checklist in
+[docs/M0-runbook.md](docs/M0-runbook.md) passes and the results are recorded.
+
+
 For requirements, architecture, workflows, decisions, and implementation planning, see [the project documentation](docs/README.md).
