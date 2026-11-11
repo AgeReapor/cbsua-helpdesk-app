@@ -43,8 +43,16 @@ Keep the terminal open. Browse to:
 | Interface | URL |
 |---|---|
 | Frappe login | http://cbsua-helpdesk.localhost:8000/login |
-| Helpdesk agent workspace | http://cbsua-helpdesk.localhost:8000/helpdesk |
-| Customer portal | http://cbsua-helpdesk.localhost:8000/help |
+| Helpdesk v16 app (agent landing) | http://cbsua-helpdesk.localhost:8000/helpdesk |
+| Customer tickets | http://cbsua-helpdesk.localhost:8000/helpdesk/my-tickets |
+| Customer knowledge base | http://cbsua-helpdesk.localhost:8000/helpdesk/kb-public |
+
+Helpdesk 16.1.0 serves its agent and customer route families from one Vue app
+whose history base is `/helpdesk/`. The current v16 router sends unauthenticated
+visitors to login, including routes marked for the customer portal. Do not
+assume guest ticket intake or guest knowledge-base access; verify the approved
+customer access policy separately. `/help` is the Studio portal route described
+by the newer upstream `develop` branch, not this v16 baseline.
 
 The hostname must resolve locally. If it does not, run from the Bench root:
 
@@ -99,7 +107,8 @@ bench --site cbsua-helpdesk.localhost clear-website-cache
 bench start
 ~~~
 
-Hard-refresh the browser and re-check /login, /helpdesk, and /help.
+Hard-refresh the browser and re-check /login, /helpdesk,
+/helpdesk/my-tickets, and /helpdesk/kb-public.
 
 ### If assets still fail
 
@@ -136,8 +145,8 @@ Back up before migrations on any environment containing data that matters.
 - [ ] list-apps shows Frappe, Telephony, Helpdesk, and CBSUA Helpdesk.
 - [ ] Login page CSS/JS assets load successfully.
 - [ ] Administrator can sign in.
-- [ ] Agent workspace at /helpdesk renders.
-- [ ] Customer portal at /help renders.
+- [ ] Helpdesk v16 app at /helpdesk renders.
+- [ ] Customer ticket and knowledge-base routes under /helpdesk render for the intended user roles.
 - [ ] A disposable test ticket can be created and viewed by an authorized agent.
 - [ ] CBSUA app tests pass.
 - [ ] Future office destinations are not enabled.

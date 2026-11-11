@@ -217,8 +217,11 @@ bench start
 
 Keep this terminal window open while using the application. Open the following URL in your browser:
 
-- **Helpdesk agent interface:** [http://cbsua-helpdesk.localhost:8000/helpdesk](http://cbsua-helpdesk.localhost:8000/helpdesk)
-- **Customer portal:** [http://cbsua-helpdesk.localhost:8000/help](http://cbsua-helpdesk.localhost:8000/help)
+- **Helpdesk v16 app:** [http://cbsua-helpdesk.localhost:8000/helpdesk](http://cbsua-helpdesk.localhost:8000/helpdesk)
+- **Customer tickets:** [http://cbsua-helpdesk.localhost:8000/helpdesk/my-tickets](http://cbsua-helpdesk.localhost:8000/helpdesk/my-tickets)
+- **Customer knowledge base:** [http://cbsua-helpdesk.localhost:8000/helpdesk/kb-public](http://cbsua-helpdesk.localhost:8000/helpdesk/kb-public)
+
+In Helpdesk 16.1.0, agent and customer pages share the Vue app under `/helpdesk/`. The separate `/help` Studio portal described on Helpdesk `develop` is not part of this v16 route layout.
 
 Sign in to the agent interface with:
 

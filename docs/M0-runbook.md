@@ -61,7 +61,10 @@ bench --site cbsua-helpdesk.localhost clear-website-cache
 bench start
 ~~~
 
-Hard-refresh and test /login, /helpdesk, and /help. If styling remains broken,
+Hard-refresh and test /login, /helpdesk, /helpdesk/my-tickets, and
+/helpdesk/kb-public. In Helpdesk v16, customer and agent routes share the
+`/helpdesk/` Vue app; `/help` is the Studio portal route documented on the
+upstream `develop` branch, not the selected v16 route. If styling remains broken,
 inspect Developer Tools > Network and Console. Record the first failed CSS/JS
 request, status, response type, first relevant console error, build output,
 and corresponding server-terminal error. Never patch generated bundles or

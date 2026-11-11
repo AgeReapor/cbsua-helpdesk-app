@@ -47,8 +47,8 @@ flowchart TB
 
     subgraph Platform["CBSUA Frappe / Helpdesk Deployment"]
         Proxy["HTTPS Reverse Proxy"]
-        Portal["Frappe Helpdesk Customer Portal"]
-        AgentPortal["Frappe Helpdesk Agent Interface"]
+        HelpdeskUI["Helpdesk v16 Vue app<br/>/helpdesk (agent and customer routes)"]
+        Desk["Frappe Desk / administration"]
         App["Frappe Helpdesk Application"]
         Framework["Frappe Framework"]
         Workers["Background Workers / Scheduler"]
@@ -62,10 +62,10 @@ flowchart TB
     Customer --> Proxy
     Agent --> Proxy
     Admin --> Proxy
-    Proxy --> Portal
-    Proxy --> AgentPortal
-    Portal --> App
-    AgentPortal --> App
+    Proxy --> HelpdeskUI
+    Proxy --> Desk
+    HelpdeskUI --> App
+    Desk --> Framework
     App --> Framework
     Framework --> DB
     Framework --> Redis

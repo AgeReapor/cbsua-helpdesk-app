@@ -1,6 +1,7 @@
 # M1 — CBSUA configuration foundation and branding
 
-**Status:** Native HD Settings branding seed and lifecycle registration are implemented in `develop`; local checkout synchronization, migration, and visual review remain unverified. Full Vue theme integration remains a separately tracked frontend patch.  
+**Status:** Native HD Settings branding seed and lifecycle registration are implemented in the current app source. The WSL Bench app checkout was observed at `0e6e718` without those hook declarations; migration and visual review remain unverified. Full Vue theme integration remains a separately tracked frontend patch.
+
 **Branch:** develop  
 **Scope:** Institutional identity, office catalogue metadata, and safe Phase 1 defaults.
 
@@ -19,7 +20,7 @@ M1 does not complete ticket routing, agent/team authorization, customer intake, 
 | cbsua_helpdesk/migrate.py | Additive seed routine after migration |
 | cbsua_helpdesk/public/css/cbsua_brand.css | Conservative institutional palette overrides |
 | cbsua_helpdesk/public/images/cbsua-logo.png | Official CBSUA logo asset supplied to the project |
-| tests/test_configuration.py | Safe-default and activation-gate tests |
+| tests/test_configuration.py | Hook registration, branding defaults/preservation, repeatable migration seeding, missing-schema diagnostics, and office activation-gate tests |
 
 CBSUA Service Office is configuration metadata only. It is not a Helpdesk Team, ticket, assignment rule, route, or permission boundary.
 
@@ -35,6 +36,14 @@ CBSUA Service Office is configuration metadata only. It is not a Helpdesk Team, 
 The controller rejects activation of a non-ICT office and rejects customer intake for inactive offices. This is a configuration guard, not a replacement for Frappe permissions.
 
 The install and migration hooks both invoke the idempotent seed routine. In `hooks.py`, `after_migrate` and `after_install` are declared as dotted Python paths, matching Frappe's documented hook contract. It validates the live HD Settings schema and writes diagnostic messages to the site log if the DocType or expected fields are unavailable. The migration seed is additive and idempotent. Existing records are not silently overwritten on later migrations. Review and correct manually changed records explicitly.
+
+The Frappe app tests check that both hooks are discoverable, that repeated `after_migrate` runs preserve the same branding and office records, and that branding setup logs and safely skips when Helpdesk settings or individual fields are absent. These checks validate the source behavior; they do not establish that the developer's WSL site has received the current branch or completed a migration.
+
+### Observed WSL hook mismatch — 2026-11-11
+
+Read-only inspection of the developer's WSL Bench checkout confirmed that the app repository is at `0e6e718` (`Rewrite README as beginner deployment guide`) and that its `cbsua_helpdesk/hooks.py` contains no `after_migrate` or `after_install` declarations. At the time of inspection, GitHub `develop` was at `7638d62`, which contains both dotted-path declarations. Frappe's v16 hook loader reads declarations from the installed app's `hooks.py`, and the v16 migration runner invokes registered `after_migrate` paths; therefore the empty hook list and blank branding values are explained by the WSL app checkout not containing the lifecycle-hook commits. The shallow `grafted` marker is not, by itself, the cause.
+
+This diagnosis is based on source and hook-list inspection only. The WSL checkout has not been updated in this task, and no site migration, app test run, asset request, or browser verification has been performed. Confirm the app checkout contains the two declarations before running migration again. References: [Frappe hooks documentation](https://docs.frappe.io/framework/user/en/python-api/hooks) and [Frappe v16 migration source](https://github.com/frappe/frappe/blob/version-16/frappe/migrate.py).
 
 ## 4. Branding palette
 
@@ -57,7 +66,7 @@ The public CBSUA homepage currently uses the institutional tagline “Education 
 
 ### Framework and Helpdesk integration reference
 
-The CBSUA app registers Frappe Desk and website assets using documented hooks. The `/helpdesk/` agent interface is a separate Vue/Vite frontend. Helpdesk `version-16` already uses `frappe-ui`; the app does not need a duplicate UI dependency. Native branding is configured through HD Settings (`brand_name`, `brand_logo`, `favicon`) and read by Helpdesk's config endpoint and `BrandLogo.vue`. See [Frappe UI integration notes](frappe-ui-integration.md) for inspected source paths, compatibility caveats, and the separate theme patch plan.
+The CBSUA app registers Frappe Desk and website assets using documented hooks. Helpdesk 16.1.0 serves its agent and customer route families from the same Vue/Vite app under `/helpdesk/`; the current v16 router sends unauthenticated visitors to login. Helpdesk `version-16` already uses `frappe-ui`; the app does not need a duplicate UI dependency. Native branding is configured through HD Settings (`brand_name`, `brand_logo`, `favicon`) and read by Helpdesk's config endpoint and `BrandLogo.vue`. See [Frappe UI integration notes](frappe-ui-integration.md) for inspected source paths, compatibility caveats, and the separate theme patch plan.
 
 ### Logo asset status
 

@@ -82,15 +82,16 @@ This log records decisions and decisions still requiring validation. Update it w
 **Status:** Accepted for M1
 
 **Decision:** Implement the CBSUA office catalogue and institutional visual layer in
-the cbsua_helpdesk app using Frappe hooks and app-owned assets. Do not patch the
-upstream Helpdesk checkout.
+the cbsua_helpdesk app using Frappe hooks and app-owned assets. Do not make
+untracked or manual edits to the installed upstream Helpdesk checkout.
 
 **Rationale:** Keeps the upstream Helpdesk upgrade path intact and gives CBSUA
 a version-controlled extension boundary.
 
 **Consequences:** CSS overrides must remain conservative and be checked against
 the pinned Helpdesk release. Changes to the Helpdesk Vue interface require a
-separate version-pinned frontend integration and regression tests.
+separately tracked, version-pinned frontend patch or maintained fork with
+regression tests and an explicit rebuild procedure.
 
 ## ADR-010 — Office catalogue activation is not authorization
 

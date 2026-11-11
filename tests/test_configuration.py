@@ -5,9 +5,12 @@ activation guard. They do not claim that Helpdesk ticket-level isolation has
 been implemented or proven; that is a separate release gate in the SRS.
 """
 
+from unittest.mock import MagicMock, call, patch
+
 import frappe
 from frappe.tests.utils import FrappeTestCase
 
+from cbsua_helpdesk.migrate import after_migrate
 from cbsua_helpdesk.setup.install import ensure_default_branding
 
 from cbsua_helpdesk.cbsua_helpdesk.doctype.cbsua_service_office.cbsua_service_office import (
@@ -108,6 +111,78 @@ class TestCBSUAConfiguration(FrappeTestCase):
             for fieldname, value in original.items():
                 restored.set(fieldname, value)
             restored.save(ignore_permissions=True)
+
+    def test_migration_seed_is_idempotent(self):
+        """Repeated migration seeding preserves the same settings and offices."""
+        office_codes = ("ICT", "REGISTRAR", "ADMISSIONS", "CASHIER")
+
+        after_migrate()
+        first_branding = frappe.get_single("HD Settings").as_dict()
+        first_offices = {
+            code: frappe.get_doc("CBSUA Service Office", code).as_dict()
+            for code in office_codes
+        }
+
+        after_migrate()
+        second_branding = frappe.get_single("HD Settings").as_dict()
+        second_offices = {
+            code: frappe.get_doc("CBSUA Service Office", code).as_dict()
+            for code in office_codes
+        }
+
+        for fieldname in ("brand_name", "brand_logo", "favicon"):
+            self.assertEqual(second_branding[fieldname], first_branding[fieldname])
+        for code in office_codes:
+            for fieldname in (
+                "office_code",
+                "office_name",
+                "phase",
+                "is_active",
+                "allow_customer_intake",
+            ):
+                self.assertEqual(
+                    second_offices[code][fieldname], first_offices[code][fieldname]
+                )
+
+    def test_branding_seed_logs_and_skips_when_settings_doctype_is_missing(self):
+        """An absent Helpdesk app is diagnosed without calling its DocType APIs."""
+        with (
+            patch.object(frappe.db, "exists", return_value=False),
+            patch.object(frappe, "logger") as logger_factory,
+            patch.object(frappe, "get_meta") as get_meta,
+            patch.object(frappe, "get_single") as get_single,
+        ):
+            ensure_default_branding()
+
+        logger_factory.return_value.warning.assert_called_once_with(
+            "HD Settings DocType is not installed; skipped CBSUA branding defaults."
+        )
+        get_meta.assert_not_called()
+        get_single.assert_not_called()
+
+    def test_branding_seed_logs_missing_fields_and_sets_available_fields(self):
+        """Schema drift is logged while fields still present are populated."""
+        metadata = MagicMock()
+        metadata.get_valid_columns.return_value = ["brand_name"]
+        settings = MagicMock()
+        settings.get.return_value = None
+
+        with (
+            patch.object(frappe.db, "exists", return_value=True),
+            patch.object(frappe, "get_meta", return_value=metadata),
+            patch.object(frappe, "get_single", return_value=settings),
+            patch.object(frappe, "logger") as logger_factory,
+        ):
+            ensure_default_branding()
+
+        settings.set.assert_called_once_with("brand_name", "CBSUA Helpdesk")
+        settings.save.assert_called_once_with(ignore_permissions=True)
+        logger_factory.return_value.warning.assert_has_calls(
+            [
+                call("HD Settings is missing expected branding field: %s", "brand_logo"),
+                call("HD Settings is missing expected branding field: %s", "favicon"),
+            ]
+        )
 
     def test_future_office_cannot_be_activated_in_m1(self):
         """Registrar, Admissions, and Cashier require a later reviewed release."""

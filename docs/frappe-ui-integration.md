@@ -90,11 +90,13 @@ No upstream Helpdesk source patch is being claimed as committed by this document
 
 The Helpdesk `develop` branch now documents its customer portal as a Frappe Studio standard app. That implementation is not the same source layout as the selected Helpdesk `version-16` installation. The local project baseline is Frappe 16.56.0 and Helpdesk 16.1.0 on `version-16`; therefore the `develop/studio/` README is an architectural reference, not an implementation instruction for this deployment.
 
+The installed Helpdesk 16.1.0 source confirms that the v16 agent and customer route families use one Vue app with history base `/helpdesk/`. Customer routes include `/helpdesk/my-tickets`, `/helpdesk/my-tickets/:ticketId`, `/helpdesk/kb-public`, `/helpdesk/kb-public/:categoryId`, and `/helpdesk/kb-public/articles/:articleId`. The v16 router redirects unauthenticated visitors to login, including on its customer portal routes. The standalone `/help` route below belongs to the newer Studio portal architecture and must not be presented as the v16 route.
+
 The upstream `develop` Studio README describes:
 - JSON page block trees with TypeScript setup scripts and reusable Vue components.
 - Source-controlled pages under `studio/helpdesk/`, synchronized into Studio DocTypes during migration.
 - A separate Studio frontend development loop (`watch-studio`) and production build.
-- A customer portal at `/help`; the agent workspace remains a separate desk app at `/helpdesk`.
+- A customer portal at `/help`; this is the Studio-based `develop` route. In the selected v16 source, customer and agent route families share the `/helpdesk/` Vue app.
 
 Do not copy Studio page JSON, scripts, or components into this CBSUA app or upgrade Helpdesk solely to obtain Studio without a separate compatibility and migration plan. For the current v16 baseline, configure the existing Helpdesk portal using the supported settings and native features. If a future approved upgrade adopts the Studio-based portal, keep CBSUA branding in source-controlled Studio app assets/components and test guest, customer, and agent access separately.
 
@@ -161,6 +163,8 @@ Then restart `bench start` and hard-refresh the browser. If HD Settings already 
 - [Frappe Helpdesk Custom Actions](https://docs.frappe.io/helpdesk/custom-actions)
 - [Helpdesk version-16 frontend package](https://github.com/frappe/helpdesk/blob/version-16/desk/package.json)
 - [Helpdesk version-16 frontend entry](https://github.com/frappe/helpdesk/blob/version-16/desk/src/main.js)
+- [Helpdesk version-16 frontend routes](https://github.com/frappe/helpdesk/blob/version-16/desk/src/router/index.ts)
+- [Helpdesk version-16 app page](https://github.com/frappe/helpdesk/blob/version-16/helpdesk/www/helpdesk/index.py)
 - [Helpdesk version-16 Tailwind preset integration](https://github.com/frappe/helpdesk/blob/version-16/desk/tailwind.config.js)
 - [Helpdesk native HD Settings schema](https://github.com/frappe/helpdesk/blob/version-16/helpdesk/helpdesk/doctype/hd_settings/hd_settings.json)
 - [Helpdesk native config endpoint](https://github.com/frappe/helpdesk/blob/version-16/helpdesk/api/config.py)

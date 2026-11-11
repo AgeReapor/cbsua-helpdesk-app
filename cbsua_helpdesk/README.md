@@ -33,7 +33,7 @@ Frappe Helpdesk remains authoritative for tickets, teams, agents, customer porta
 | `cbsua_helpdesk/doctype/cbsua_service_office/` | Office catalogue schema and controller validation |
 | `public/images/cbsua-logo.png` | Official CBSUA logo supplied for the project |
 | `public/css/cbsua_brand.css` | Conservative Frappe Desk and website styles; not injected into the Helpdesk Vue app |
-| `../tests/` | Frappe app tests for office defaults and branding configuration |
+| `../tests/` | Frappe app tests for office defaults, branding, lifecycle registration, repeatability, and schema drift |
 
 Keep comments in internal files current when changing behavior. Every migration should be safe to run more than once and must not silently overwrite an administrator's configured settings.
 
@@ -112,6 +112,7 @@ Then restart `bench start` and hard-refresh the browser.
 - [ ] Registrar, Admissions, and Cashier remain inactive and intake-disabled.
 - [ ] `HD Settings` has the CBSUA brand defaults if those fields were blank before migration.
 - [ ] A pre-existing non-empty HD Settings value survives a subsequent migration.
+- [ ] Tests cover repeated migration seeding and log/skip behavior for a missing DocType or branding field.
 - [ ] The configured logo and favicon asset paths return HTTP 200.
 - [ ] The Helpdesk frontend displays the configured brand logo.
 - [ ] The CBSUA app test suite passes.
