@@ -26,6 +26,19 @@ class TestCBSUAConfiguration(FrappeTestCase):
             office = frappe.get_doc("CBSUA Service Office", code)
             self.assertEqual((office.is_active, office.allow_customer_intake), flags)
 
+    def test_helpdesk_branding_defaults_are_configured(self):
+        """Native HD Settings expose the official logo to the Helpdesk Vue app."""
+        settings = frappe.get_single("HD Settings")
+        self.assertEqual(settings.brand_name, "CBSUA Helpdesk")
+        self.assertEqual(
+            settings.brand_logo,
+            "/assets/cbsua_helpdesk/images/cbsua-logo.png",
+        )
+        self.assertEqual(
+            settings.favicon,
+            "/assets/cbsua_helpdesk/images/cbsua-logo.png",
+        )
+
     def test_future_office_cannot_be_activated_in_m1(self):
         """Registrar, Admissions, and Cashier require a later reviewed release."""
         office = frappe.get_doc("CBSUA Service Office", "REGISTRAR")
