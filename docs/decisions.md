@@ -106,3 +106,34 @@ concerns. A configuration flag must not be mistaken for an authorization rule.
 
 **Consequences:** Ticket routing and office-scoped permissions remain pending.
 Future offices cannot be activated until onboarding and isolation tests pass.
+
+
+## ADR-011 — Reuse Helpdesk's existing Frappe UI stack
+
+**Status:** Accepted for M1
+
+**Decision:** Adapt the Frappe UI version already pinned by Helpdesk `version-16`. Do not add a second copy of the package or upgrade it as part of CBSUA branding.
+
+**Rationale:** Source inspection confirms Helpdesk's Vue frontend already imports Frappe UI, uses its Tailwind preset, and uses Frappe Framework UI components. Reuse reduces dependency duplication and upgrade risk.
+
+**Consequences:** New frontend components must be checked against the exact installed `frappe-ui@1.0.0-rc.1` API rather than assuming current-main docs apply. A full theme change requires a tracked source-level integration in the Helpdesk frontend build. Do not edit generated assets or node_modules.
+
+## ADR-012 — Use native HD Settings for Helpdesk brand identity
+
+**Status:** Accepted; implementation committed
+
+**Decision:** Set `brand_name`, `brand_logo`, and `favicon` in Helpdesk's singleton HD Settings only when the values are blank.
+
+**Rationale:** Helpdesk's config endpoint exposes these fields and its Vue BrandLogo component consumes the configured logo. This is the native integration point, unlike general Frappe Desk CSS hooks.
+
+**Consequences:** Administrator-configured values are preserved. The migration is additive and does not force branding values on subsequent runs.
+
+## ADR-013 — Keep Custom Actions scoped to documented ticket workflows
+
+**Status:** Accepted
+
+**Decision:** Use Helpdesk HD Form Script / Custom Actions only for ticket-page actions that map to an approved SRS requirement and cannot be met through native configuration. Do not use them for global navigation or branding.
+
+**Rationale:** Custom Actions are contextual Form Scripts with different supported functions on agent, customer, and new-ticket views. A client-side button is not an authorization boundary.
+
+**Consequences:** Any consequential action requires server-side permission validation, explicit customer-portal exposure review, and authorized/unauthorized tests. No custom action is introduced until a concrete workflow gap is approved.
