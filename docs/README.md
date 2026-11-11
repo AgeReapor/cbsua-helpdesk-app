@@ -22,6 +22,8 @@ The platform should be multi-office capable in its design, while only ICT is ena
 | [Workflows](workflows.md) | Ticket lifecycle, intake, assignment, escalation, and office onboarding |
 | [Implementation Roadmap](roadmap.md) | Work packages, phase gates, deliverables, and task breakdown |
 | [Decision Log](decisions.md) | Architectural decisions, assumptions, and items requiring validation |
+| [M0 Runbook](M0-runbook.md) | Local environment verification and acceptance checklist |
+| [M1 Configuration and Branding](M1-configuration-and-branding.md) | Office catalogue, institutional palette, installation, tests, and rollback |
 
 ## Documentation conventions
 
