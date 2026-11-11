@@ -1,0 +1,92 @@
+{
+  "doctype": "DocType",
+  "name": "CBSUA Service Office",
+  "module": "CBSUA Helpdesk",
+  "autoname": "field:office_code",
+  "naming_rule": "By fieldname",
+  "engine": "InnoDB",
+  "track_changes": 1,
+  "allow_rename": 0,
+  "allow_import": 0,
+  "editable_grid": 0,
+  "istable": 0,
+  "issingle": 0,
+  "custom": 0,
+  "fields": [
+    {
+      "fieldname": "office_code",
+      "label": "Office Code",
+      "fieldtype": "Data",
+      "reqd": 1,
+      "unique": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "description": "Stable uppercase identifier used by CBSUA configuration. Do not use this as a Helpdesk Team ID."
+    },
+    {
+      "fieldname": "office_name",
+      "label": "Office Name",
+      "fieldtype": "Data",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "phase",
+      "label": "Delivery Phase",
+      "fieldtype": "Select",
+      "options": "Phase 1\nFuture",
+      "default": "Future",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "is_active",
+      "label": "Office Active",
+      "fieldtype": "Check",
+      "default": "0",
+      "in_list_view": 1,
+      "description": "Catalogue activation flag only. It does not provision agents or grant ticket access."
+    },
+    {
+      "fieldname": "allow_customer_intake",
+      "label": "Allow Customer Intake",
+      "fieldtype": "Check",
+      "default": "0",
+      "in_list_view": 1,
+      "description": "Reserved for a later approved intake integration. M1 permits this only for ICT."
+    },
+    {
+      "fieldname": "description",
+      "label": "Description / Onboarding Notes",
+      "fieldtype": "Small Text"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 0,
+      "report": 1,
+      "export": 0,
+      "share": 0,
+      "print": 1,
+      "email": 0
+    }
+  ],
+  "sort_field": "office_code",
+  "sort_order": "ASC",
+  "search_fields": "office_code,office_name",
+  "title_field": "office_name",
+  "field_order": [
+    "office_code",
+    "office_name",
+    "phase",
+    "is_active",
+    "allow_customer_intake",
+    "description"
+  ],
+  "doctype_js": "",
+  "__comments": "CBSUA office catalogue only. It is not a Helpdesk Team, ticket routing rule, or authorization boundary. Only ICT is enabled in M1; future offices remain disabled until an onboarding release."
+}
