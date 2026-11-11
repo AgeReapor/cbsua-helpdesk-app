@@ -26,7 +26,7 @@ The CBSUA Service Office DocType is a CBSUA metadata catalogue. It does not crea
 
 The CBSUA app uses Frappe's documented app_include_css and web_include_css hooks to add a restrained palette to Desk and portal pages. The CSS does not modify upstream source files. The Helpdesk agent interface is a Vue application; CSS variables and framework-level selectors are deliberately conservative. A full replacement of Vue component branding requires a separate version-pinned frontend integration and visual regression tests, not broad CSS overrides.
 
-The temporary SVG app mark is not the supplied official seal. See docs/M1-configuration-and-branding.md for logo asset status, palette rationale, verification, and rollback.
+The supplied official PNG is referenced by Frappe branding hooks. The standalone Helpdesk Vue agent interface still requires a separate frontend integration. See docs/M1-configuration-and-branding.md for asset status, palette rationale, verification, and rollback.
 
 ## Important limitations
 
