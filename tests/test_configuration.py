@@ -41,6 +41,35 @@ class TestCBSUAConfiguration(FrappeTestCase):
             "/assets/cbsua_helpdesk/images/cbsua-logo.png",
         )
 
+    def test_branding_seed_populates_blank_fields(self):
+        """The seed repairs blank native fields without requiring a reinstall."""
+        settings = frappe.get_single("HD Settings")
+        original = {
+            fieldname: settings.get(fieldname)
+            for fieldname in ("brand_name", "brand_logo", "favicon")
+        }
+        try:
+            for fieldname in original:
+                settings.set(fieldname, None)
+            settings.save(ignore_permissions=True)
+
+            ensure_default_branding()
+            refreshed = frappe.get_single("HD Settings")
+            self.assertEqual(refreshed.brand_name, "CBSUA Helpdesk")
+            self.assertEqual(
+                refreshed.brand_logo,
+                "/assets/cbsua_helpdesk/images/cbsua-logo.png",
+            )
+            self.assertEqual(
+                refreshed.favicon,
+                "/assets/cbsua_helpdesk/images/cbsua-logo.png",
+            )
+        finally:
+            restored = frappe.get_single("HD Settings")
+            for fieldname, value in original.items():
+                restored.set(fieldname, value)
+            restored.save(ignore_permissions=True)
+
     def test_branding_seed_preserves_existing_admin_values(self):
         """A rerun must not overwrite branding deliberately set by an admin."""
         settings = frappe.get_single("HD Settings")
