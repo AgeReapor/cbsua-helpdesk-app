@@ -16,6 +16,21 @@ from cbsua_helpdesk.cbsua_helpdesk.doctype.cbsua_service_office.cbsua_service_of
 
 
 class TestCBSUAConfiguration(FrappeTestCase):
+    def test_cbsua_lifecycle_hooks_are_registered(self):
+        """The installed app must expose both seed entry points to Frappe.
+
+        This catches a packaging regression where migration helpers exist but
+        hooks.py no longer registers them, leaving HD Settings blank forever.
+        """
+        self.assertIn(
+            "cbsua_helpdesk.migrate.after_migrate",
+            frappe.get_hooks("after_migrate", app_name="cbsua_helpdesk"),
+        )
+        self.assertIn(
+            "cbsua_helpdesk.migrate.after_install",
+            frappe.get_hooks("after_install", app_name="cbsua_helpdesk"),
+        )
+
     def test_default_office_catalogue_is_seeded(self):
         """Migrations seed all four offices while exposing only ICT intake."""
         expected = {
