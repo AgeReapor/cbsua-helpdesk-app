@@ -17,6 +17,9 @@ app_color = "#106031"
 # Frappe's documented Desk and Portal asset hooks. Keep both CSS files in this
 # app so upgrades to the upstream Helpdesk checkout do not overwrite them.
 app_include_css = ["/assets/cbsua_helpdesk/css/cbsua_brand.css"]
+
+# App-scoped CSS is not loaded by the /helpdesk Vue application; this hook
+# intentionally styles only Frappe Desk. See the frontend integration notes.
 web_include_css = ["/assets/cbsua_helpdesk/css/cbsua_brand.css"]
 
 # Used by Frappe app metadata surfaces and the standard website navbar.
