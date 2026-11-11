@@ -1,6 +1,6 @@
 # M1 — CBSUA configuration foundation and branding
 
-**Status:** Initial implementation committed; local migration and visual review required.  
+**Status:** Native HD Settings branding defaults implemented; local migration and visual review required. Full Vue theme integration remains a separately tracked frontend patch.  
 **Branch:** develop  
 **Scope:** Institutional identity, office catalogue metadata, and safe Phase 1 defaults.
 
@@ -18,7 +18,7 @@ M1 does not complete ticket routing, agent/team authorization, customer intake, 
 | cbsua_helpdesk/setup/install.py | Idempotent creation of baseline office records |
 | cbsua_helpdesk/migrate.py | Additive seed routine after migration |
 | cbsua_helpdesk/public/css/cbsua_brand.css | Conservative institutional palette overrides |
-| cbsua_helpdesk/public/images/cbsua-logo.png | Temporary compact app icon; not a substitute for the official seal |
+| cbsua_helpdesk/public/images/cbsua-logo.png | Official CBSUA logo asset supplied to the project |
 | tests/test_configuration.py | Safe-default and activation-gate tests |
 
 CBSUA Service Office is configuration metadata only. It is not a Helpdesk Team, ticket, assignment rule, route, or permission boundary.
@@ -55,13 +55,13 @@ Gold is not used as small text on white because contrast is insufficient. The st
 
 The public CBSUA homepage currently uses the institutional tagline “Education for Sustainable Human Development” and includes an Online Services section. The university's About Us navigation also provides a dedicated “Seal, Coat of Arms, and Hymn” reference page. These are useful identity and information-architecture references for a future customer portal: institutional naming, recognizable seal usage, clear service entry points, and accessible information hierarchy. This M1 implementation uses the seal's green/gold colors and CBSUA naming, but does not copy website layout or claim to have scraped/downloaded every website asset. See [CBSUA homepage](https://cbsua.edu.ph/) and [About Us / Board of Regents navigation](https://cbsua.edu.ph/about-us/board-of-regents/).
 
-### Framework integration reference
+### Framework and Helpdesk integration reference
 
-The Desk stylesheet is registered using `app_include_css`; website pages use `web_include_css`; and the standard website navbar uses `brand_html`. These hooks do not inject styles into the standalone `/helpdesk/` Vue application. See [Frappe Hooks documentation](https://docs.frappe.io/framework/user/en/python-api/hooks).
+The CBSUA app registers Frappe Desk and website assets using documented hooks. The `/helpdesk/` agent interface is a separate Vue/Vite frontend. Helpdesk `version-16` already uses `frappe-ui`; the app does not need a duplicate UI dependency. Native branding is configured through HD Settings (`brand_name`, `brand_logo`, `favicon`) and read by Helpdesk's config endpoint and `BrandLogo.vue`. See [Frappe UI integration notes](frappe-ui-integration.md) for inspected source paths, compatibility caveats, and the separate theme patch plan.
 
 ### Logo asset status
 
-The official `cbsua-logo.png` has now been uploaded to `cbsua_helpdesk/public/images/` on the develop branch. Frappe app metadata and the standard website brand hook now reference this PNG. The former approximate SVG mark has been removed. Note that the standalone `/helpdesk/` Vue/Vite agent interface has its own frontend bundle; changing Frappe's `brand_html`, `app_logo_url`, or Desk CSS does not automatically replace its internal logo. That frontend integration is a separate, version-pinned implementation task. Preserve the logo's source/attribution and do not redraw it.
+The official `cbsua-logo.png` is stored at `cbsua_helpdesk/public/images/cbsua-logo.png`. Frappe app metadata, website branding hooks, and the new HD Settings defaults reference this asset. The migration only fills empty HD Settings fields and preserves administrator choices. The Helpdesk Vue app reads its logo from the native config response. A full theme/color integration still requires a source-level, version-pinned stylesheet patch; see [Frappe UI integration](frappe-ui-integration.md). Preserve the supplied logo as-is.
 
 ## 5. Installation and verification
 
@@ -69,7 +69,7 @@ From the Frappe Bench root:
 
 ~~~bash
 bench --site cbsua-helpdesk.localhost migrate
-bench build --app cbsua_helpdesk
+bench build --app helpdesk --app cbsua_helpdesk
 bench --site cbsua-helpdesk.localhost clear-cache
 bench --site cbsua-helpdesk.localhost clear-website-cache
 bench start
@@ -83,15 +83,19 @@ bench --site cbsua-helpdesk.localhost run-tests --app cbsua_helpdesk
 
 After migration, inspect CBSUA Service Office in Desk. Confirm ICT is active with intake enabled and all future offices are inactive with intake disabled. Attempting to activate a future office should produce a validation error.
 
-Inspect the browser Network panel for cbsua_brand.css and review Desk/portal at desktop and mobile widths. If the asset is not requested, review hooks and rebuild/cache.
+Inspect the Helpdesk config response and verify the logo/favicon URLs return HTTP 200. Confirm the agent interface displays the configured logo. The current `cbsua_brand.css` hook does not recolor the Vue agent application; do not use its presence in Network as proof of agent UI theme integration.
 
 ## 6. Rollback
 
 1. Back up the local site before migration if it contains data that matters.
-2. To remove branding only, remove app_include_css and web_include_css entries from hooks.py, then migrate/clear cache/build.
+2. To remove the native Helpdesk branding defaults, clear or replace the HD Settings fields manually. To remove Desk/website styles, remove the corresponding hooks from hooks.py, then rebuild and clear caches. The migration does not force values back after an administrator changes them.
 3. Do not delete office catalogue records after later configuration references them.
 4. Production rollback requires a reviewed backup and code release; do not manually drop DocType tables.
 
-## 7. Not implemented in M1
+## 7. Frappe UI and Custom Actions
+
+Helpdesk `version-16` already uses Frappe UI. CBSUA will adapt the existing UI rather than add another frontend dependency. Native branding defaults are implemented; a source-level theme integration remains separately planned. Helpdesk Custom Actions are ticket-page Form Scripts, not global theme hooks. They should be added only for a specific approved ticket workflow gap and must include server-side authorization checks. See [frappe-ui-integration.md](frappe-ui-integration.md).
+
+## 8. Not implemented in M1
 
 HD Team provisioning and membership; ticket office field/routing/automatic assignment; office-scoped permission_query_conditions or has_permission overrides; customer identity policy (OQ-01); ICT categories, SLA, calendars, notifications, and reports; future office activation. These omissions are deliberate. Prove ticket access isolation before onboarding additional offices or entering real institutional ticket data.
