@@ -10,7 +10,8 @@ Deliver a complete, usable ICT ticketing service before onboarding other offices
 |---|---|---|---|
 | WP-01 | Version and environment baseline | Pinned Frappe/Helpdesk versions; development and test environments | Clean install and compatibility recorded |
 | WP-02 | Stakeholder requirements | Approved ICT categories, fields, priorities, workflow, customer access policy | ICT owner signs off |
-| WP-03 | Helpdesk configuration | CBSUA branding, portal settings, ticket templates and fields | Configuration reviewed |
+| WP-03 | Helpdesk configuration | CBSUA native HD Settings branding, portal settings, ticket templates and fields | Configuration reviewed |
+| WP-03a | Frappe UI adaptation | Version-pinned CBSUA theme integration using Helpdesk's existing Frappe UI stack | Agent and portal visual/accessibility tests pass; no duplicate UI dependency |
 | WP-04 | ICT queue and routing | ICT team, queue views, assignment configuration | Test tickets route correctly |
 | WP-05 | Identity and permissions | Admin, manager, agent setup and access policy | Permission tests pass |
 | WP-06 | Ticket processing | Reply, internal comment, status, resolution and closure configuration | End-to-end workflow passes |
@@ -34,7 +35,10 @@ Create issues from these work packages and link them to requirement IDs in `SRS.
 - [ ] Approve ticket categories, subcategories, and required fields.
 - [ ] Approve priority definitions and ticket lifecycle.
 - [ ] Approve customer portal authentication and submission policy.
-- [ ] Configure CBSUA branding and customer portal.
+- [ ] Configure CBSUA native HD Settings branding and customer portal.
+- [ ] Integrate CBSUA theme tokens into the pinned Helpdesk Vue frontend using the existing Frappe UI dependency.
+- [ ] Verify agent and customer interfaces in light/dark themes and responsive layouts.
+- [ ] Evaluate ticket-page Custom Actions only against an approved SRS workflow gap.
 - [ ] Configure ICT team and queue views.
 - [ ] Configure manual assignment and evaluate automatic assignment.
 - [ ] Configure staff roles, invitations, and deactivation.
