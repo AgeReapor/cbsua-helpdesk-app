@@ -186,5 +186,6 @@ The M1 CBSUA extension and office catalogue are documented in
 Apply the migration and run the CBSUA app tests after updating the develop
 branch. The office catalogue is metadata only; it does not route tickets or
 grant office access. ICT is the only active office; future offices remain
-disabled. The current SVG brand mark is explicitly temporary and is not the
-official full seal.
+disabled. CBSUA branding defaults are configured through Helpdesk HD Settings
+using the official PNG logo. See [Frappe UI integration](../docs/frappe-ui-integration.md)
+for the native branding mechanism, frontend theme boundary, and Custom Actions guidance.
