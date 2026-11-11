@@ -75,3 +75,34 @@ This log records decisions and decisions still requiring validation. Update it w
 **Decision:** Queueing refers to digital ticket queues and assignment. Physical walk-in token management, counter displays, and turn calling are excluded unless separately approved.
 
 **Rationale:** These capabilities represent a distinct operational system and should not silently expand the current project.
+
+
+## ADR-009 — Keep CBSUA configuration and branding in the extension app
+
+**Status:** Accepted for M1
+
+**Decision:** Implement the CBSUA office catalogue and institutional visual layer in
+the cbsua_helpdesk app using Frappe hooks and app-owned assets. Do not patch the
+upstream Helpdesk checkout.
+
+**Rationale:** Keeps the upstream Helpdesk upgrade path intact and gives CBSUA
+a version-controlled extension boundary.
+
+**Consequences:** CSS overrides must remain conservative and be checked against
+the pinned Helpdesk release. Changes to the Helpdesk Vue interface require a
+separate version-pinned frontend integration and regression tests.
+
+## ADR-010 — Office catalogue activation is not authorization
+
+**Status:** Accepted for M1
+
+**Decision:** Maintain a CBSUA Service Office metadata catalogue with ICT active
+and intake-enabled; Registrar, Admissions, and Cashier remain inactive and
+intake-disabled. The catalogue does not provision Helpdesk Teams or grant
+ticket permissions.
+
+**Rationale:** Office onboarding and ticket access isolation are separate
+concerns. A configuration flag must not be mistaken for an authorization rule.
+
+**Consequences:** Ticket routing and office-scoped permissions remain pending.
+Future offices cannot be activated until onboarding and isolation tests pass.
