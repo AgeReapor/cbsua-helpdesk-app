@@ -11,7 +11,19 @@ from cbsua_helpdesk.setup.install import (
 )
 
 
+def after_install():
+    """Seed baseline configuration immediately after a fresh app install.
+
+    Helpdesk is installed before this extension, so HD Settings is available.
+    """
+    ensure_default_offices()
+    ensure_default_branding()
+
+
 def after_migrate():
-    """Ensure baseline office metadata exists after DocTypes are synchronized."""
+    """Reconcile missing baseline configuration after every site migration.
+
+    Both routines are idempotent and preserve administrator-configured values.
+    """
     ensure_default_offices()
     ensure_default_branding()
