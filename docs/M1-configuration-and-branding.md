@@ -57,7 +57,7 @@ The public CBSUA homepage currently uses the institutional tagline “Education 
 
 ### Framework integration reference
 
-The Desk and portal stylesheet is registered using Frappe's documented `app_include_css` and `web_include_css` hooks. The navbar mark uses the documented `brand_html` hook. See [Frappe Hooks documentation](https://docs.frappe.io/framework/user/en/python-api/hooks).
+The Desk stylesheet is registered using `app_include_css`; website pages use `web_include_css`; and the standard website navbar uses `brand_html`. These hooks do not inject styles into the standalone `/helpdesk/` Vue application. See [Frappe Hooks documentation](https://docs.frappe.io/framework/user/en/python-api/hooks).
 
 ### Logo asset status
 
