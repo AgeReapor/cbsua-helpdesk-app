@@ -8,6 +8,8 @@ been implemented or proven; that is a separate release gate in the SRS.
 import frappe
 from frappe.tests.utils import FrappeTestCase
 
+from cbsua_helpdesk.setup.install import ensure_default_branding
+
 from cbsua_helpdesk.cbsua_helpdesk.doctype.cbsua_service_office.cbsua_service_office import (
     CBSUAServiceOffice,
 )
@@ -38,6 +40,30 @@ class TestCBSUAConfiguration(FrappeTestCase):
             settings.favicon,
             "/assets/cbsua_helpdesk/images/cbsua-logo.png",
         )
+
+    def test_branding_seed_preserves_existing_admin_values(self):
+        """A rerun must not overwrite branding deliberately set by an admin."""
+        settings = frappe.get_single("HD Settings")
+        original = {
+            fieldname: settings.get(fieldname)
+            for fieldname in ("brand_name", "brand_logo", "favicon")
+        }
+        try:
+            settings.brand_name = "Existing approved brand"
+            settings.brand_logo = "/files/approved-logo.png"
+            settings.favicon = "/files/approved-favicon.png"
+            settings.save(ignore_permissions=True)
+
+            ensure_default_branding()
+            refreshed = frappe.get_single("HD Settings")
+            self.assertEqual(refreshed.brand_name, "Existing approved brand")
+            self.assertEqual(refreshed.brand_logo, "/files/approved-logo.png")
+            self.assertEqual(refreshed.favicon, "/files/approved-favicon.png")
+        finally:
+            restored = frappe.get_single("HD Settings")
+            for fieldname, value in original.items():
+                restored.set(fieldname, value)
+            restored.save(ignore_permissions=True)
 
     def test_future_office_cannot_be_activated_in_m1(self):
         """Registrar, Admissions, and Cashier require a later reviewed release."""
