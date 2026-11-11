@@ -11,6 +11,17 @@ that guard.
 import frappe
 
 
+# Helpdesk's own HD Settings drives the Vue agent/customer app branding.
+# Use the app-served image path so the official logo is available without
+# duplicating the PNG into Frappe's private File storage. These are defaults:
+# never overwrite an administrator's explicitly configured brand values.
+DEFAULT_BRANDING = {
+    "brand_name": "CBSUA Helpdesk",
+    "brand_logo": "/assets/cbsua_helpdesk/images/cbsua-logo.png",
+    "favicon": "/assets/cbsua_helpdesk/images/cbsua-logo.png",
+}
+
+
 DEFAULT_OFFICES = (
     {
         "office_code": "ICT",
@@ -64,3 +75,28 @@ def ensure_default_offices():
                 **office,
             }
         ).insert(ignore_permissions=True)
+
+
+
+def ensure_default_branding():
+    """Set Helpdesk's native brand fields only when they are still blank.
+
+    Helpdesk's public config endpoint reads these HD Settings fields and its
+    Vue BrandLogo component consumes brand_logo. Using the native settings is
+    safer than attempting to inject Desk CSS into the standalone Vue app.
+    Administrators remain free to replace any value later.
+    """
+    if not frappe.db.exists("DocType", "HD Settings"):
+        # Keep installation tolerant of app ordering mistakes; the normal
+        # installation order installs Helpdesk before this extension.
+        return
+
+    settings = frappe.get_single("HD Settings")
+    changed = False
+    for fieldname, value in DEFAULT_BRANDING.items():
+        if not settings.get(fieldname):
+            settings.set(fieldname, value)
+            changed = True
+
+    if changed:
+        settings.save(ignore_permissions=True)
