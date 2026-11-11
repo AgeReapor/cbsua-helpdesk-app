@@ -18,7 +18,7 @@ M1 does not complete ticket routing, agent/team authorization, customer intake, 
 | cbsua_helpdesk/setup/install.py | Idempotent creation of baseline office records |
 | cbsua_helpdesk/migrate.py | Additive seed routine after migration |
 | cbsua_helpdesk/public/css/cbsua_brand.css | Conservative institutional palette overrides |
-| cbsua_helpdesk/public/images/cbsua-brand-mark.svg | Temporary compact app icon; not a substitute for the official seal |
+| cbsua_helpdesk/public/images/cbsua-logo.png | Temporary compact app icon; not a substitute for the official seal |
 | tests/test_configuration.py | Safe-default and activation-gate tests |
 
 CBSUA Service Office is configuration metadata only. It is not a Helpdesk Team, ticket, assignment rule, route, or permission boundary.
@@ -61,7 +61,7 @@ The Desk and portal stylesheet is registered using Frappe's documented `app_incl
 
 ### Logo asset status
 
-The uploaded full-resolution seal is available in the project conversation, but the GitHub file-writing connector accepts UTF-8 text and has no binary upload operation. The official PNG has therefore not been committed as a binary file in this change. The SVG in public/images is a clearly documented temporary icon treatment, not the supplied official seal. Replace it with the approved seal once a binary asset can be added through a Git-capable local checkout or supported upload flow. Preserve the attribution supplied with the image.
+The official `cbsua-logo.png` has now been uploaded to `cbsua_helpdesk/public/images/` on the develop branch. Frappe app metadata and the standard website brand hook now reference this PNG. The former approximate SVG mark has been removed. Note that the standalone `/helpdesk/` Vue/Vite agent interface has its own frontend bundle; changing Frappe's `brand_html`, `app_logo_url`, or Desk CSS does not automatically replace its internal logo. That frontend integration is a separate, version-pinned implementation task. Preserve the logo's source/attribution and do not redraw it.
 
 ## 5. Installation and verification
 
