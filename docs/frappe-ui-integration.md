@@ -86,7 +86,20 @@ The supported M1 path is therefore:
 
 No upstream Helpdesk source patch is being claimed as committed by this document. The present repository owns the native settings defaults and the documentation only.
 
-## 6. Custom Actions — use only for ticket-specific workflow gaps
+## 6. Studio compatibility boundary
+
+The Helpdesk `develop` branch now documents its customer portal as a Frappe Studio standard app. That implementation is not the same source layout as the selected Helpdesk `version-16` installation. The local project baseline is Frappe 16.56.0 and Helpdesk 16.1.0 on `version-16`; therefore the `develop/studio/` README is an architectural reference, not an implementation instruction for this deployment.
+
+The upstream `develop` Studio README describes:
+- JSON page block trees with TypeScript setup scripts and reusable Vue components.
+- Source-controlled pages under `studio/helpdesk/`, synchronized into Studio DocTypes during migration.
+- A separate Studio frontend development loop (`watch-studio`) and production build.
+- A customer portal at `/help`; the agent workspace remains a separate desk app at `/helpdesk`.
+
+Do not copy Studio page JSON, scripts, or components into this CBSUA app or upgrade Helpdesk solely to obtain Studio without a separate compatibility and migration plan. For the current v16 baseline, configure the existing Helpdesk portal using the supported settings and native features. If a future approved upgrade adopts the Studio-based portal, keep CBSUA branding in source-controlled Studio app assets/components and test guest, customer, and agent access separately.
+
+Reference: [Helpdesk develop Studio README](https://github.com/frappe/helpdesk/blob/develop/studio/README.md).
+## 7. Custom Actions — use only for ticket-specific workflow gaps
 
 The official Helpdesk Custom Actions documentation describes Form Scripts attached to `HD Ticket` using `HD Form Script`. A script returns an `actions` array and receives ticket context such as `doc`, `updateField`, `call`, `router`, `$dialog`, and `createToast`. Scripts can be enabled for agent ticket views, customer ticket views, or new-ticket pages, with function support varying by page.
 
