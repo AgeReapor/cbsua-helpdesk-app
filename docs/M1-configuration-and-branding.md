@@ -51,6 +51,14 @@ The palette is sampled from the supplied CBSUA seal and translated into usable d
 
 Gold is not used as small text on white because contrast is insufficient. The stylesheet avoids changing every component or hardcoding typography across the Helpdesk Vue application. Confirm final typography, official logo usage, and exact rules with CBSUA PIO.
 
+### Public website observations
+
+The public CBSUA homepage currently uses the institutional tagline “Education for Sustainable Human Development” and includes an Online Services section. The university's About Us navigation also provides a dedicated “Seal, Coat of Arms, and Hymn” reference page. These are useful identity and information-architecture references for a future customer portal: institutional naming, recognizable seal usage, clear service entry points, and accessible information hierarchy. This M1 implementation uses the seal's green/gold colors and CBSUA naming, but does not copy website layout or claim to have scraped/downloaded every website asset. See [CBSUA homepage](https://cbsua.edu.ph/) and [About Us / Board of Regents navigation](https://cbsua.edu.ph/about-us/board-of-regents/).
+
+### Framework integration reference
+
+The Desk and portal stylesheet is registered using Frappe's documented `app_include_css` and `web_include_css` hooks. The navbar mark uses the documented `brand_html` hook. See [Frappe Hooks documentation](https://docs.frappe.io/framework/user/en/python-api/hooks).
+
 ### Logo asset status
 
 The uploaded full-resolution seal is available in the project conversation, but the GitHub file-writing connector accepts UTF-8 text and has no binary upload operation. The official PNG has therefore not been committed as a binary file in this change. The SVG in public/images is a clearly documented temporary icon treatment, not the supplied official seal. Replace it with the approved seal once a binary asset can be added through a Git-capable local checkout or supported upload flow. Preserve the attribution supplied with the image.
