@@ -1,0 +1,41 @@
+/*
+ * CBSUA Helpdesk — institutional visual foundation
+ * Palette sampled from the official university seal supplied for this project.
+ * Conservative selectors avoid rewriting Helpdesk's Vue component internals.
+ * This is a digital adaptation, not an approved university brand manual.
+ */
+:root {
+  --cbsua-green-950: #06452a;
+  --cbsua-green-900: #0b5632;
+  --cbsua-green-800: #106031;
+  --cbsua-green-700: #197342;
+  --cbsua-gold-500: #ece249;
+  --cbsua-gold-600: #d9cb35;
+  --cbsua-gold-100: #fbf8d5;
+  --cbsua-ink: #173326;
+  --cbsua-muted: #66766c;
+  --cbsua-border: #dce6de;
+  --primary: var(--cbsua-green-800);
+  --primary-color: var(--cbsua-green-800);
+  --primary-hover: var(--cbsua-green-900);
+  --brand-color: var(--cbsua-green-800);
+  --text-color: var(--cbsua-ink);
+  --heading-color: var(--cbsua-green-950);
+  --control-bg: #ffffff;
+  --control-border-color: var(--cbsua-border);
+  --focus-color: rgba(16, 96, 49, 0.22);
+}
+.navbar, header.navbar, header.navbar-default {
+  border-bottom: 3px solid var(--cbsua-gold-500);
+}
+.btn-primary, .btn-primary:focus, .btn-primary:active {
+  background-color: var(--cbsua-green-800);
+  border-color: var(--cbsua-green-800);
+}
+.btn-primary:hover {
+  background-color: var(--cbsua-green-900);
+  border-color: var(--cbsua-green-900);
+}
+a { color: var(--cbsua-green-800); }
+a:hover { color: var(--cbsua-green-950); }
+:focus-visible { outline: 2px solid var(--cbsua-green-700); outline-offset: 2px; }
