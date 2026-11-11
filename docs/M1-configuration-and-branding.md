@@ -1,6 +1,6 @@
 # M1 — CBSUA configuration foundation and branding
 
-**Status:** Native HD Settings branding seeding hardened with install/migration hooks and tests; local migration and visual review required. Full Vue theme integration remains a separately tracked frontend patch.  
+**Status:** Native HD Settings branding seed and lifecycle registration are implemented in `develop`; local checkout synchronization, migration, and visual review remain unverified. Full Vue theme integration remains a separately tracked frontend patch.  
 **Branch:** develop  
 **Scope:** Institutional identity, office catalogue metadata, and safe Phase 1 defaults.
 
@@ -34,7 +34,7 @@ CBSUA Service Office is configuration metadata only. It is not a Helpdesk Team, 
 
 The controller rejects activation of a non-ICT office and rejects customer intake for inactive offices. This is a configuration guard, not a replacement for Frappe permissions.
 
-The install and migration hooks both invoke the idempotent seed routine. It validates the live HD Settings schema and writes diagnostic messages to the site log if the DocType or expected fields are unavailable. The migration seed is additive and idempotent. Existing records are not silently overwritten on later migrations. Review and correct manually changed records explicitly.
+The install and migration hooks both invoke the idempotent seed routine. In `hooks.py`, `after_migrate` and `after_install` are declared as dotted Python paths, matching Frappe's documented hook contract. It validates the live HD Settings schema and writes diagnostic messages to the site log if the DocType or expected fields are unavailable. The migration seed is additive and idempotent. Existing records are not silently overwritten on later migrations. Review and correct manually changed records explicitly.
 
 ## 4. Branding palette
 
