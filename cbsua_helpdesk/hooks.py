@@ -32,4 +32,4 @@ brand_html = (
 
 # Additive, repeatable catalogue seed. This runs after DocTypes are synced by
 # migrate, so the Service Office table exists before records are inserted.
-after_migrate = ["cbsua_helpdesk.migrate.after_migrate"]
+after_migrate = "cbsua_helpdesk.migrate.after_migrate"
