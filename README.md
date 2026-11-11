@@ -417,7 +417,21 @@ Do not manually insert app records into the database to work around an installat
 - [ ] Build and test the Docker image and deployment stack
 
 
-## 10. M0 local baseline — current implementation
+## 10. M1 — CBSUA configuration and branding foundation
+
+The initial M1 implementation adds a CBSUA Service Office catalogue, safe
+Phase 1 defaults, and conservative institutional styling. Read
+[docs/M1-configuration-and-branding.md](docs/M1-configuration-and-branding.md)
+for the implementation boundary, palette rationale, logo asset status,
+migration steps, tests, and rollback. The Helpdesk integration instructions
+are in [helpdesk/M1-setup.md](helpdesk/M1-setup.md).
+
+After pulling the develop branch, run `bench migrate`, build the CBSUA app
+assets, clear caches, and run the app tests. M1 does not yet implement ticket
+routing, HD Team provisioning, or office-level ticket isolation. ICT is the
+only active office record; Registrar, Admissions, and Cashier remain disabled.
+
+## 11. M0 local baseline — current implementation
 
 M0 is the first engineering milestone: verify that the local Frappe/Helpdesk
 stack is healthy before implementing CBSUA-specific workflows. It is a
