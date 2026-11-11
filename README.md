@@ -197,15 +197,15 @@ bench --site cbsua-helpdesk.localhost install-app cbsua_helpdesk
 
 The order matters: Telephony is a Helpdesk dependency, and the CBSUA app extends the Helpdesk platform.
 
-### Step 7 — Build Helpdesk assets
+### Step 7 — Build Helpdesk and CBSUA assets
 
-Build the Helpdesk frontend assets:
+Build the Helpdesk frontend assets and link the CBSUA app's public branding assets:
 
 ```bash
-bench build --app helpdesk
+bench build --app helpdesk --app cbsua_helpdesk
 ```
 
-The CBSUA scaffold currently has no custom frontend assets, so it does not need a separate frontend build step.
+The CBSUA logo is served from the app's public directory under `/assets/cbsua_helpdesk/`; rebuild after adding or changing public assets.
 
 ### Step 8 — Start the local server
 
@@ -381,10 +381,10 @@ sudo systemctl start redis-server
 
 ### Helpdesk page or assets do not load
 
-From the Bench directory, rebuild Helpdesk assets and restart the development server:
+From the Bench directory, rebuild Helpdesk and CBSUA assets, then restart the development server:
 
 ```bash
-bench build --app helpdesk
+bench build --app helpdesk --app cbsua_helpdesk
 ```
 
 ### App is not listed after installation

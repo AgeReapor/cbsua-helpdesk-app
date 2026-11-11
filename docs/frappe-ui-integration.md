@@ -1,6 +1,6 @@
 # Frappe UI integration and CBSUA adaptation
 
-**Status:** M1 implementation guidance; native branding defaults implemented, Vue theme integration documented for the next verified frontend patch.
+**Status:** M1 implementation; native branding defaults, app-owned Vue theme tokens, and a version-guarded v16 page-shell integration are implemented.
 **Target:** Frappe Framework 16 + Frappe Helpdesk `version-16` + the Helpdesk frontend dependency set resolved by that branch.
 **Owner:** `cbsua_helpdesk` extension.
 
@@ -35,17 +35,18 @@ This native configuration is the correct first branding layer for the agent app 
 
 ## 3. CBSUA theme direction
 
-The digital palette is sampled from the official seal supplied to the project. It is a project implementation palette, not a claim of formal approval by CBSUA's communications office.
+The current implementation follows the supplied CBSUA Digital Design System v0.1.0 proposal. The palette remains provisional pending validation by CBSUA's communications office; it is not claimed as an approved institutional standard.
 
 | Project token | Value | UI role |
 |---|---|---|
-| `cbsua-green-950` | `#06452A` | Strong headings / rare dark brand surfaces |
-| `cbsua-green-900` | `#0B5632` | Hover / pressed brand actions |
-| `cbsua-green-800` | `#106031` | Primary institutional accent |
-| `cbsua-green-700` | `#197342` | Supporting accent |
-| `cbsua-gold-500` | `#ECE249` | Thin accent / active indicator |
-| `cbsua-gold-100` | `#FBF8D5` | Limited highlight surface |
-| `cbsua-ink` | `#173326` | Brand-specific dark text |
+| `brand.primary` | `#174B35` | Primary actions and links |
+| `brand.primary-hover` | `#103B2A` | Hover state |
+| `brand.primary-subtle` | `#EAF2ED` | Selected and subtle surfaces |
+| `brand.accent` | `#C6A04A` | Restrained secondary emphasis |
+| `brand.accent-subtle` | `#F6F0E1` | Warm highlight surface |
+| `neutral.50` | `#F8FAF8` | Application background |
+| `neutral.200` | `#DDE4DE` | Borders and separators |
+| `neutral.800` | `#29382F` | Primary text |
 
 ### Visual rules
 
@@ -75,16 +76,30 @@ The current `https://ui.frappe.io/llms.txt` index and upstream `skills/frappe-ui
 
 ## 5. Safe integration boundary
 
-The CBSUA app currently registers `app_include_css` and `web_include_css`. Those hooks cover Frappe Desk and website pages; they are not a supported injection mechanism for the standalone Helpdesk Vue bundle at `/helpdesk`.
+The CBSUA app registers `app_include_css` and `web_include_css` for Frappe Desk and normal website pages. Helpdesk's `/helpdesk` page uses a standalone HTML shell and does not load those hooks. Its theme stylesheet, CBSUA page title, browser favicon, and Apple touch icon are therefore integrated by the tracked script through guarded, idempotent edits to `apps/helpdesk/helpdesk/www/helpdesk/index.html`.
 
-The supported M1 path is therefore:
-1. Configure native Helpdesk branding through HD Settings (implemented).
-2. Keep the institutional palette and design rules in this CBSUA app and project documentation.
-3. For actual agent-UI recoloring, add a small, reviewed integration to the Helpdesk frontend's source entry stylesheet (currently `desk/src/index.css`) and rebuild Helpdesk assets.
-4. Track that integration as a version-pinned patch or maintained fork with an explicit upstream rebase procedure. Do not edit generated files in `helpdesk/public/desk`, `sites/assets`, or `node_modules`.
-5. Verify every selector/token against the exact pinned Frappe UI release. Do not copy a current-main token implementation into the older RC without inspection.
+Apply the integration after migration and asset build:
 
-No upstream Helpdesk source patch is being claimed as committed by this document. The present repository owns the native settings defaults and the documentation only.
+```bash
+python /path/to/cbsua-helpdesk-app/scripts/integrate_helpdesk_branding.py /path/to/frappe-bench
+```
+
+The stylesheet overrides the installed Frappe UI semantic tokens for light surfaces, sidebar, blue action/selection colors, text, outlines, and focus rings. It preserves functional status colors and the dark theme. The brand mark in the sidebar is fitted with contained proportions and a restrained gold keyline; the original asset is unchanged. Re-run the integration script after Helpdesk updates. It checks for the v16 shell and exits without editing if the expected template shape is absent. Never edit generated bundles, `sites/assets`, or `node_modules` for this integration.
+
+The Helpdesk template itself remains an upstream checkout file; the patch script and stylesheet are versioned in the CBSUA app repository so the change can be reapplied and reviewed after upgrades.
+
+### Where to put custom styles
+
+Use the stylesheet that matches the surface being changed:
+
+| Surface | File / mechanism | Use it for |
+|---|---|---|
+| Frappe Desk and regular website pages | `cbsua_helpdesk/public/css/cbsua_brand.css` via `app_include_css` / `web_include_css` | CBSUA Frappe Desk and standard website chrome |
+| Helpdesk agent and customer Vue app at `/helpdesk` | `cbsua_helpdesk/public/css/cbsua_helpdesk.css` loaded by `scripts/integrate_helpdesk_branding.py` | Frappe UI semantic tokens and stable shell-level CBSUA identity |
+
+Keep the Helpdesk stylesheet app-owned and limited to documented semantic tokens or stable, inspected shell selectors. Add new design values as named CBSUA custom properties at the top of that file, then map the corresponding Frappe UI semantic tokens. Preserve Helpdesk status colors, component behavior, and the framework's dark palette. Avoid selectors tied to generated Vite hashes, utility-class combinations that can change between builds, and broad `!important` rules. Do not put Helpdesk Vue rules into `cbsua_brand.css`: its hooks are not present in the standalone Helpdesk shell.
+
+The integration script also replaces Helpdesk's hard-coded document title and favicon/touch-icon URLs. The logo URL carries a version query so browsers refresh a previously cached favicon. After changing app CSS or images, run `bench build --app cbsua_helpdesk`; after replacing or upgrading Helpdesk, run the integration script again and confirm it recognizes the v16 template. Clear site caches and hard-refresh the browser. An unsupported template is left untouched and requires reviewing/revising the tracked script before deployment.
 
 ## 6. Studio compatibility boundary
 
@@ -117,7 +132,7 @@ Before creating a custom action:
 
 No custom ticket action is added in this M1 change because the current SRS does not identify a specific additional ticket-page action that cannot be met by native Helpdesk functionality.
 
-## 7. Verification plan
+## 7. Verification status
 
 ### Native branding
 - [ ] Confirm the CBSUA app is installed on the site (`bench --site cbsua-helpdesk.localhost list-apps`).
@@ -127,9 +142,9 @@ No custom ticket action is added in this M1 change because the current SRS does 
 - [ ] Confirm existing administrator values are preserved on a second migration.
 - [ ] Confirm `/api/method/helpdesk.api.config.get_config` returns the configured values for an authenticated test site.
 - [ ] Confirm the logo and favicon asset URLs return HTTP 200.
-- [ ] Confirm the logo appears in the agent interface and relevant portal/login surfaces.
+- [ ] Complete browser review of the logo and theme on agent, customer, and login surfaces.
 
-### UI theme integration (separate frontend patch)
+### UI theme integration
 - [ ] Pin exact Helpdesk and Frappe UI commits/versions.
 - [ ] Add only source-level CSS imports/overrides; never edit generated bundles.
 - [ ] Run the Helpdesk frontend production build.

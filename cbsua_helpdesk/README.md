@@ -12,6 +12,8 @@ This app currently owns:
 - The Phase 1 guard that permits only ICT to be active/intake-enabled.
 - Native Helpdesk branding defaults in the `HD Settings` singleton, filled only when those fields are blank.
 - CBSUA-owned public image and CSS assets.
+- A System Manager Workspace linking to the office catalogue DocType.
+- A tracked Helpdesk v16 page-shell integration for the CBSUA Vue theme stylesheet.
 - Migration integration and app-level tests.
 
 This app does **not** currently own:
@@ -32,7 +34,10 @@ Frappe Helpdesk remains authoritative for tickets, teams, agents, customer porta
 | `setup/install.py` | Idempotent office seeding and non-destructive HD Settings brand defaults |
 | `cbsua_helpdesk/doctype/cbsua_service_office/` | Office catalogue schema and controller validation |
 | `public/images/cbsua-logo.png` | Official CBSUA logo supplied for the project |
-| `public/css/cbsua_brand.css` | Conservative Frappe Desk and website styles; not injected into the Helpdesk Vue app |
+| `public/css/cbsua_brand.css` | Conservative Frappe Desk and website styles |
+| `public/css/cbsua_helpdesk.css` | Provisional design-system token overrides for Helpdesk Vue |
+| `cbsua_helpdesk/workspace/cbsua_helpdesk/` | Standard System Manager Workspace with office catalogue shortcut |
+| `../scripts/integrate_helpdesk_branding.py` | Guarded, repeatable Helpdesk v16 stylesheet integration |
 | `../tests/` | Frappe app tests for office defaults, branding, lifecycle registration, repeatability, and schema drift |
 
 Keep comments in internal files current when changing behavior. Every migration should be safe to run more than once and must not silently overwrite an administrator's configured settings.
@@ -70,9 +75,9 @@ To change branding manually, open Helpdesk's **HD Settings → Branding** and se
 
 Helpdesk `version-16` already uses Vue 3, Tailwind CSS, and `frappe-ui@1.0.0-rc.1`, with a Tailwind preset and framework UI source integration. Do not install another copy of Frappe UI in this app and do not upgrade the pinned dependency as part of this branding work.
 
-The current `app_include_css` and `web_include_css` hooks apply to Frappe Desk and website pages. They do not automatically style the standalone Helpdesk Vue frontend at `/helpdesk`.
+The current `app_include_css` and `web_include_css` hooks apply to Frappe Desk and website pages. Helpdesk's standalone `/helpdesk` shell does not load them; run the tracked integration script to include the app-owned Vue theme stylesheet.
 
-The full theme adaptation is documented in [Frappe UI integration](../docs/frappe-ui-integration.md). Any future agent UI theme work must be integrated into the version-pinned Helpdesk frontend source and rebuilt. Do not edit `node_modules`, generated `helpdesk/public/desk` bundles, or `sites/assets` by hand.
+The theme integration is documented in [Frappe UI integration](../docs/frappe-ui-integration.md). Re-run the guarded script after upgrading Helpdesk. Do not edit `node_modules`, generated `helpdesk/public/desk` bundles, or `sites/assets` by hand.
 
 Follow the Frappe UI conventions after checking the installed package version: prefer library components, semantic `surface`/`ink`/`outline` tokens, documented component props, and Frappe data composables where supported. Current-main documentation can be newer than Helpdesk's pinned release candidate.
 

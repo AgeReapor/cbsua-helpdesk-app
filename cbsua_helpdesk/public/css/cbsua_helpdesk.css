@@ -1,0 +1,111 @@
+/*
+ * CBSUA Helpdesk Vue application theme.
+ * Palette follows the supplied CBSUA Digital Design System v0.1.0 proposal;
+ * values remain provisional until validated against official brand guidance.
+ * Loaded after Helpdesk's compiled stylesheet by the tracked v16 integration.
+ */
+:root:not([data-theme="dark"]) {
+  --cbsua-brand-primary: #174b35;
+  --cbsua-brand-primary-hover: #103b2a;
+  --cbsua-brand-primary-subtle: #eaf2ed;
+  --cbsua-brand-accent: #c6a04a;
+  --cbsua-brand-accent-subtle: #f6f0e1;
+  --cbsua-neutral-50: #f8faf8;
+  --cbsua-neutral-100: #f0f3f0;
+  --cbsua-neutral-200: #dde4de;
+  --cbsua-neutral-600: #5c6b61;
+  --cbsua-neutral-800: #29382f;
+  --cbsua-neutral-950: #17231b;
+
+  --surface-base: #f8faf8;
+  --surface-gray-1: #ffffff;
+  --surface-gray-2: #f8faf8;
+  --surface-gray-3: #f0f3f0;
+  --surface-gray-4: #e5ebe6;
+  --surface-gray-5: #dce5de;
+  --surface-gray-6: #cbd7ce;
+  --surface-gray-7: #b1c1b5;
+  --surface-gray-8: #8da493;
+  --surface-gray-9: #5d7e66;
+  --surface-gray-10: #355c42;
+  --surface-sidebar: #f0f3f0;
+  --surface-elevation-1: #ffffff;
+  --surface-elevation-2: #ffffff;
+  --surface-elevation-3: #eaf2ed;
+  --surface-blue-1: #f5f8f5;
+  --surface-blue-2: #eaf2ed;
+  --surface-blue-3: #d8e7dc;
+  --surface-blue-4: #b8d2c0;
+  --surface-blue-5: #8fb69b;
+  --surface-blue-6: #5c936d;
+  --surface-blue-7: #39774e;
+  --surface-blue-8: #245d3a;
+  --surface-blue-9: #174b35;
+  --surface-blue-10: #103b2a;
+  --outline-gray-1: #dde4de;
+  --outline-gray-2: #d3ddd5;
+  --outline-gray-3: #b8c6bb;
+  --outline-blue-1: #eaf2ed;
+  --outline-blue-2: #d8e7dc;
+  --outline-blue-3: #b8d2c0;
+  --outline-blue-4: #8fb69b;
+  --outline-blue-5: #5c936d;
+  --outline-blue-6: #39774e;
+  --outline-blue-7: #245d3a;
+  --outline-blue-8: #174b35;
+  --outline-blue-9: #103b2a;
+  --outline-blue-10: #0b2f21;
+  --ink-gray-9: #29382f;
+  --ink-gray-7: #5c6b61;
+  --ink-blue-1: #8fb69b;
+  --ink-blue-2: #5c936d;
+  --ink-blue-3: #39774e;
+  --ink-blue-4: #245d3a;
+  --ink-blue-5: #174b35;
+  --ink-blue-6: #174b35;
+  --ink-blue-7: #103b2a;
+  --ink-blue-8: #0b2f21;
+  --ink-blue-9: #08281c;
+  --ink-blue-10: #062116;
+  --focus-outline-blue: 2px solid #174b35;
+}
+
+html:not([data-theme="dark"]) body {
+  background-color: var(--cbsua-neutral-50);
+  color: var(--cbsua-neutral-800);
+}
+
+a:not([class*="text-"]) {
+  color: var(--cbsua-brand-primary);
+}
+
+a:not([class*="text-"]):hover {
+  color: var(--cbsua-brand-primary-hover);
+}
+
+html:not([data-theme="dark"]) #app button:has(> img[alt="Brand Logo"]) {
+  background: var(--cbsua-brand-primary-subtle);
+  border: 1px solid var(--cbsua-neutral-200);
+  border-bottom: 3px solid var(--cbsua-brand-accent);
+}
+
+html:not([data-theme="dark"]) #app img[alt="Brand Logo"] {
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 2px;
+  object-fit: contain;
+  background: #ffffff;
+  border: 1px solid var(--cbsua-neutral-200);
+  border-radius: 8px;
+}
+
+html:not([data-theme="dark"]) :focus-visible {
+  outline: 2px solid var(--cbsua-brand-primary);
+  outline-offset: 2px;
+}
+
+@media (max-width: 639px) {
+  #app {
+    min-width: 0;
+  }
+}

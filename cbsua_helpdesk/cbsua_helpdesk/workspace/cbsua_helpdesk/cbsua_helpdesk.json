@@ -1,0 +1,36 @@
+{
+  "doctype": "Workspace",
+  "name": "CBSUA Helpdesk",
+  "label": "CBSUA Helpdesk",
+  "title": "CBSUA Helpdesk",
+  "module": "CBSUA Helpdesk",
+  "icon": "support",
+  "type": "Workspace",
+  "standard": 1,
+  "public": 1,
+  "is_hidden": 0,
+  "hide_custom": 0,
+  "for_user": "",
+  "roles": [
+    { "role": "System Manager" }
+  ],
+  "charts": [],
+  "number_cards": [],
+  "quick_lists": [],
+  "shortcuts": [],
+  "custom_blocks": [],
+  "content": "[]",
+  "links": [
+    {
+      "label": "CBSUA Service Office",
+      "link_to": "CBSUA Service Office",
+      "link_type": "DocType",
+      "type": "Link",
+      "hidden": 0,
+      "onboard": 0,
+      "link_count": 0,
+      "is_query_report": 0,
+      "dependencies": ""
+    }
+  ]
+}

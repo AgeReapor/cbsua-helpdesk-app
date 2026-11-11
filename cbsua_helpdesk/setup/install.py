@@ -8,6 +8,9 @@ of future offices until a later, reviewed onboarding implementation changes
 that guard.
 """
 
+import json
+from pathlib import Path
+
 import frappe
 
 
@@ -76,6 +79,29 @@ def ensure_default_offices():
             }
         ).insert(ignore_permissions=True)
 
+
+
+def ensure_default_workspace():
+    """Create the CBSUA Desk workspace once from its app-owned definition."""
+    workspace_name = "CBSUA Helpdesk"
+    if frappe.db.exists("Workspace", workspace_name):
+        return
+
+    workspace_file = (
+        Path(__file__).resolve().parent.parent
+        / "cbsua_helpdesk"
+        / "workspace"
+        / "cbsua_helpdesk"
+        / "cbsua_helpdesk.json"
+    )
+    if not workspace_file.is_file():
+        frappe.logger("cbsua_helpdesk").warning(
+            "CBSUA Helpdesk Workspace definition is missing: %s", workspace_file
+        )
+        return
+
+    workspace = json.loads(workspace_file.read_text(encoding="utf-8"))
+    frappe.get_doc(workspace).insert(ignore_permissions=True)
 
 
 def ensure_default_branding():

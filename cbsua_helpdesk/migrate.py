@@ -8,6 +8,7 @@ Teams, configure routes, or change ticket permissions.
 from cbsua_helpdesk.setup.install import (
     ensure_default_branding,
     ensure_default_offices,
+    ensure_default_workspace,
 )
 
 
@@ -18,6 +19,7 @@ def after_install():
     """
     ensure_default_offices()
     ensure_default_branding()
+    ensure_default_workspace()
 
 
 def after_migrate():
@@ -27,3 +29,4 @@ def after_migrate():
     """
     ensure_default_offices()
     ensure_default_branding()
+    ensure_default_workspace()
