@@ -11,7 +11,6 @@ app_publisher = "Central Bicol State University of Agriculture"
 app_description = "CBSUA-branded service desk configuration and extensions."
 app_email = ""
 app_license = "Proprietary"
-app_icon = "octicon octicon-life-buoy"
 app_color = "#106031"
 
 # Frappe's documented Desk and Portal asset hooks. Keep both CSS files in this
@@ -58,4 +57,10 @@ permission_query_conditions = {
 }
 has_permission = {
     "HD Ticket": "cbsua_helpdesk.permissions.has_hd_ticket_permission",
+}
+
+# Frappe's documented website context hook. 
+website_context = {
+    "favicon": app_logo_url,
+    "splash_image": app_logo_url  # Optional: sets loading splash screen
 }

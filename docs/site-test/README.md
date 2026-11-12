@@ -1,6 +1,6 @@
 # CBSUA Helpdesk clean Site test
 
-This runbook creates a fresh Frappe Site for the `site-test` app branch. It is separate from the main project README because it covers an isolated installation and its verification lifecycle.
+This runbook covers setup, local deployment, localhost access, verification, and cleanup for the `site-test` Frappe Site. It is separate from the main project README because it documents this isolated test environment rather than the main development Site or a production deployment.
 
 ## What the test isolates
 
@@ -23,6 +23,8 @@ The test uses the bench’s existing MariaDB service and its installed Frappe, T
 | Test Site name | `cbsua-helpdesk-site-test.localhost` |
 | Runtime Site directory | `<bench>/sites/cbsua-helpdesk-site-test.localhost` |
 | Existing development Site | `cbsua-helpdesk.localhost` |
+
+The app branch and Frappe Site are separate: checking out `site-test` changes app source in the Bench, while the Site name selects its database and configuration. Both Sites can be served by the same local Bench on port `8000`; use the matching hostname in the browser so Frappe routes to the intended Site.
 
 The test Site must have a different database from the development Site. Do not copy the existing Site’s database or configuration into the test.
 
@@ -55,13 +57,13 @@ The test Site must have a different database from the development Site. Do not c
    git -C apps/cbsua_helpdesk log -1 --oneline
    ```
 
-   If a local `site-test` branch already exists, switch to it instead of creating it again, then verify its commit against the remote branch. The starting branch commit for this runbook is `86af7f425428e573f195b390d8ee6fc56090655f`; use the current remote tip for later runs.
+   If a local `site-test` branch already exists, switch to it instead of creating it again, then verify its commit against the remote branch. The initial branch commit was `86af7f425428e573f195b390d8ee6fc56090655f`; the implementation run recorded below used commit `7a2b99e`. Use the current remote tip for later runs.
 
-5. Ensure you have an authorized MariaDB administrator credential available at the interactive prompt. The existing Site’s database user has privileges only on its own database and cannot create a second Site database. Do not put a MariaDB password or the new Administrator password in shell history, a command argument, a checked-in file, or a screenshot. If Bench cannot authenticate to MariaDB, stop and arrange authorized database provisioning; do not reuse the old Site’s database or switch the test to an unsupported engine.
+5. Ensure you have an authorized MariaDB administrator credential available at Bench's interactive prompt. The existing Site’s database user may have privileges only on its own database and cannot create another Site database. Do not put a MariaDB password or the new Administrator password in shell history, a command argument, a checked-in file, or a screenshot. If Bench cannot authenticate to MariaDB, arrange authorized database provisioning; do not reuse the old Site’s database or switch the test to an unsupported engine.
 
 ## Create the Frappe Site
 
-Run the following from the Bench root. Bench will prompt interactively for the MariaDB root password (if it is not configured for socket authentication) and a new password for the test Site’s `Administrator` account:
+Run this once from the Bench root when creating a fresh test Site. The current WSL test Site has already been created, so do not repeat this command against it. Bench will prompt for MariaDB authentication (unless the configured database account uses socket authentication) and a new password for the test Site’s `Administrator` account:
 
 ```bash
 bench new-site cbsua-helpdesk-site-test.localhost
@@ -77,7 +79,26 @@ sites/cbsua-helpdesk-site-test.localhost/site_config.json
 
 That file includes database credentials. Leave it local and untracked.
 
-## Install the apps and migrate
+## Deploy source updates to the local test Site
+
+For first-time installation, use the one-time install procedure below. For an existing Site, do not reinstall apps. To deploy a reviewed `site-test` source update to this local Site, run from the Bench root:
+
+```bash
+git -C apps/cbsua_helpdesk status --short --branch
+git -C apps/cbsua_helpdesk fetch upstream
+git -C apps/cbsua_helpdesk switch site-test
+git -C apps/cbsua_helpdesk pull --ff-only upstream site-test
+bench build --app helpdesk --app cbsua_helpdesk
+bench --site cbsua-helpdesk-site-test.localhost migrate
+bench --site cbsua-helpdesk-site-test.localhost clear-cache
+bench --site cbsua-helpdesk-site-test.localhost clear-website-cache
+```
+
+Review the app working tree before fetching or switching. Preserve local edits rather than resetting or cleaning them. If the checkout uses a remote name other than `upstream`, substitute its configured remote. The build step refreshes bundled frontend and public assets; migration applies DocType and fixture changes to this Site's database. Follow a separate build procedure for changed assets owned by other apps or for a changed Helpdesk template.
+
+This procedure deploys code to a local development/test Site only. It is not a production deployment procedure: `bench start` is a development server, and this repo does not provide the production infrastructure, TLS, process supervision, backup/restore, monitoring, or release automation needed for production.
+
+## Install the apps and migrate (first time only)
 
 Install the dependencies in order so the log clearly records each app:
 
@@ -93,20 +114,42 @@ Expected installed apps: `frappe`, `telephony`, `helpdesk`, and `cbsua_helpdesk`
 
 ## Start or restart the Bench before browser checks
 
-Apply database changes with `migrate` before checking a website update. If `bench start` is already running, stop it with Ctrl+C after migration, then start it again from the Bench root:
+After the build, migration, and cache clearing are complete, restart the development server before checking a website update. If `bench start` is already running, stop it with Ctrl+C, then start it from the Bench root:
 
 ```bash
 bench start
 ```
 
-Keep this command running in its terminal while checking the Site. If an updated Helpdesk frontend asset is part of the change, build the required assets before restarting:
+Keep this command running in its terminal while checking the Site. Do not close the terminal while using the local test Site.
+
+## Localhost access
+
+With `bench start` running in the WSL Bench root, open these URLs from the Windows or WSL browser:
+
+| Purpose | URL |
+|---|---|
+| Helpdesk portal | [http://cbsua-helpdesk-site-test.localhost:8000/helpdesk](http://cbsua-helpdesk-site-test.localhost:8000/helpdesk) |
+| Frappe Desk | [http://cbsua-helpdesk-site-test.localhost:8000/desk](http://cbsua-helpdesk-site-test.localhost:8000/desk) |
+| Login | [http://cbsua-helpdesk-site-test.localhost:8000/login](http://cbsua-helpdesk-site-test.localhost:8000/login) |
+| Customer tickets | [http://cbsua-helpdesk-site-test.localhost:8000/helpdesk/my-tickets](http://cbsua-helpdesk-site-test.localhost:8000/helpdesk/my-tickets) |
+
+Sign in with the `Administrator` account created for this Site when checking Desk configuration. Use separate customer and agent test accounts for portal and access-control checks. The Administrator credentials are Site-specific; they are not the credentials for `cbsua-helpdesk.localhost`.
+
+From WSL, a quick HTTP check is:
 
 ```bash
-bench build --app helpdesk --app cbsua_helpdesk
-bench --site cbsua-helpdesk-site-test.localhost migrate
+curl -I http://cbsua-helpdesk-site-test.localhost:8000/helpdesk
 ```
 
-Then stop and restart `bench start` again. Open `http://cbsua-helpdesk-site-test.localhost:8000/helpdesk` and `http://cbsua-helpdesk-site-test.localhost:8000/desk`, sign in as the test Site’s Administrator, and hard-refresh after the server restart.
+If the `.localhost` name does not resolve in the browser, first confirm the server is running and the request reaches port `8000`. From WSL, test Frappe's hostname-based Site routing directly with:
+
+```bash
+curl -I -H 'Host: cbsua-helpdesk-site-test.localhost' http://127.0.0.1:8000/helpdesk
+```
+
+The `Host` header is essential when testing by IP because the Bench may contain more than one Site. If the WSL request works but the Windows browser cannot resolve the name, configure the host's local name resolution for `cbsua-helpdesk-site-test.localhost` to loopback using the host's normal administrator-managed process. Do not change the Bench's default Site to work around a hostname problem.
+
+After the page loads, hard-refresh the browser and verify the CBSUA theme, logo, and favicon. Use the browser Network panel or `curl -I` on the asset URL to distinguish a stale browser cache from a missing asset. A successful `/desk` response alone does not verify customer login, agent access, or office isolation.
 
 ## Clean-install verification
 
@@ -173,4 +216,6 @@ Keep the test Site for review unless it is no longer needed. Removing a Site is 
 
 ## Current attempt
 
-The `site-test` source branch is committed and pushed. The new Frappe Site has not yet been created in the current WSL bench because this session has no non-interactive MariaDB administrator credential; the development Site’s database user cannot provision another database. Do not report the clean-Site installation or app tests as passed until the procedure above is completed.
+The `site-test` branch is committed and pushed. The fresh Site `cbsua-helpdesk-site-test.localhost` was created in the WSL Bench at `/home/kadinarudess/frappe/frappe-bench`; `telephony`, `helpdesk`, and `cbsua_helpdesk` were installed, assets were built, and migration completed. The app branch was at commit `7a2b99e` during the recorded implementation run.
+
+The test command `bench --site cbsua-helpdesk-site-test.localhost run-tests --app cbsua_helpdesk` was invoked and exited with status 0, but the captured output did not include a test count or pass/fail summary. Treat the test result as **unverified** until the test log shows a completed passing run. The live browser check and ICT team/intake configuration are also pending; do not mark the visual, routing, or authorization checks above complete based on installation and migration alone. Re-run the checks from the Bench root using the instructions in this guide, then record the verified results and dependency commits here.
