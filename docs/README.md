@@ -22,12 +22,12 @@ The hosting architecture has transitioned to the CBSUA Pilot stack. The previous
 | Document | Purpose |
 |---|---|
 | [Software Requirements Specification](SRS.md) | Scope, actors, functional and non-functional requirements, acceptance criteria |
-| [Architecture](architecture.md) | System context, containers, components, conceptual data model, office routing |
+| [Architecture](architecture.md) | C4 context/containers/components, UML domain model, ERD, state machine, sequence and authorization diagrams |
 | [Workflows](workflows.md) | Ticket lifecycle, intake, assignment, escalation, and office onboarding |
 | [Implementation Roadmap](roadmap.md) | Work packages, phase gates, deliverables, and task breakdown |
-| [Decision Log](decisions.md) | Architectural decisions, assumptions, and items requiring validation |
+| [Decision Log](decisions.md) | Architectural decisions, assumptions, and items requiring validation |\n| [Traceability Matrix](traceability-matrix.md) | Customer problems → needs → requirements → architecture → verification evidence |
 
-## Documentation conventions
+## Requirements engineering approach\n\nThe SRS follows the Problem-Based-SRS progression: Business Context → Customer Problems (WHY) → Software Glance → Customer Needs (WHAT) → Software Vision → Functional/Non-functional Requirements (HOW). Each requirement has a stable identifier and verification method. See the [SRS](SRS.md) and [Traceability Matrix](traceability-matrix.md). Architecture visuals are maintained as Mermaid source in [architecture.md](architecture.md).\n\n## Documentation conventions
 
 - Requirement IDs use `FR-` for functional requirements and `NFR-` for non-functional requirements.
 - Mermaid diagrams are maintained as source in Markdown code fences.
