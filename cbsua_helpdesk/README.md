@@ -10,7 +10,7 @@ This app currently owns:
 - The `CBSUA Service Office` configuration DocType.
 - Safe, additive seed defaults for ICT, Registrar, Admissions, and Cashier.
 - The Phase 1 guard that permits only ICT to be active/intake-enabled.
-- A protected `cbsua_service_office` custom field on native `HD Ticket`.
+- A server-stamped, read-only `cbsua_service_office` custom field on native `HD Ticket` (currently permission level 7; customer visibility is an open policy decision).
 - Fail-closed routing of new tickets to the single active office's mapped native Helpdesk Team.
 - Additional office-aware list and direct-document checks for CBSUA-tagged tickets.
 - Native Helpdesk branding defaults in the `HD Settings` singleton, filled only when those fields are blank.

@@ -12,7 +12,7 @@ This SRS defines the requirements for implementing a CBSUA-branded ticketing and
 
 ## 2. Product scope
 
-The system shall provide a shared platform for customers to submit and track service tickets and for authorized office personnel to receive, queue, assign, process, and resolve them.
+The system shall provide a shared Frappe Helpdesk Site per environment for customers to submit and track service tickets and for authorized office personnel to receive, queue, assign, process, and resolve them. The Site is shared across participating office teams; it is not a separate Site per office. A clean test Site is an environment-isolation check and does not by itself prove safe migration of existing tickets or office-level security.
 
 ### 2.1 In scope
 
@@ -72,7 +72,7 @@ Priority convention: **Must** = required for the relevant phase; **Should** = de
 | FR-02 | Must | The system shall record a subject, description, requester identity/contact, creation timestamp, and configured required fields. |
 | FR-03 | Must | The system shall assign a unique ticket reference. |
 | FR-04 | Must | The system shall support ticket classification and priority. |
-| FR-05 | Must | Customers shall be able to view permitted ticket details and updates according to the approved customer-access policy. |
+| FR-05 | Must | Customers shall be able to view permitted ticket details and updates according to the approved customer-access policy, including the approved policy for contacts who belong to the same customer organization. |
 | FR-06 | Should | Authorized agents shall be able to create tickets on behalf of customers for requests received by phone or in person. |
 | FR-07 | Must | The system shall support customer communication associated with a ticket. |
 
@@ -80,13 +80,13 @@ Priority convention: **Must** = required for the relevant phase; **Should** = de
 
 | ID | Priority | Requirement |
 |---|---|---|
-| FR-08 | Must | Each ticket shall be associated with one responsible office or service team. |
+| FR-08 | Must | Each CBSUA ticket shall be associated with one responsible service office and its mapped native Helpdesk Team. The Helpdesk Team shall be mapped to no more than one Service Office. Existing unclassified tickets are governed by the approved legacy-ticket policy. |
 | FR-09 | Must | During Phase 1, ICT shall be the only enabled office destination. |
 | FR-10 | Must | The design shall support adding Registrar, Admissions, and Cashier without creating separate Helpdesk installations. |
-| FR-11 | Must | Tickets shall be routed to the appropriate office team using configured routing rules. |
+| FR-11 | Must | New CBSUA tickets shall be routed server-side to the single active, intake-enabled Service Office and its existing, enabled Helpdesk Team. Creation shall fail closed if there is no unique active destination or its Team is missing or disabled; customers shall not choose or override the office/team assignment. |
 | FR-12 | Must | Tickets shall be assignable to a team and, where applicable, an individual agent. |
 | FR-13 | Must | Authorized managers shall be able to reassign or escalate tickets within their approved scope. |
-| FR-14 | Future | Customers shall be able to select among approved office destinations after those offices are activated. |
+| FR-14 | Future | Customers shall be able to select among approved office destinations after those offices are activated and each destination's office mapping, access policy, and intake validation have passed the onboarding gate. |
 
 ### 5.3 Queue and assignment management
 
@@ -123,8 +123,8 @@ Priority convention: **Must** = required for the relevant phase; **Should** = de
 | FR-33 | Must | Authorized administrators shall be able to invite, activate, and deactivate staff accounts using supported platform functions. |
 | FR-34 | Must | Staff shall receive roles and team membership appropriate to their duties. |
 | FR-35 | Must | Disabled staff accounts shall not be able to access agent functions. |
-| FR-36 | Must | Agents shall not access tickets outside their authorized scope. |
-| FR-37 | Must | Office managers shall not receive broader platform administration rights unless explicitly approved. |
+| FR-36 | Must | Agents shall not access tickets outside their authorized scope through any supported ticket list, direct document route, API, Helpdesk search, report/export, conversation, or attachment/download path. Approved cross-office administrators are handled as explicit exceptions. |
+| FR-37 | Must | Office managers shall not receive broader platform administration rights unless explicitly approved. Platform-wide administrator and cross-office support exceptions shall be named and reviewed separately from office-team permissions. |
 | FR-38 | Future | Authorized staff from each new office shall be provisioned during that office's onboarding. |
 
 ### 5.6 SLA and notifications
@@ -163,6 +163,9 @@ Priority convention: **Must** = required for the relevant phase; **Should** = de
 | NFR-09 | The customer and agent interfaces shall be usable on commonly supported desktop and mobile browsers. |
 | NFR-10 | Administrative and ticket-processing activities shall be auditable to the extent supported by the platform and configured logging. |
 | NFR-11 | Production deployment shall include monitoring, backup, restore testing, and documented operational ownership. |
+| NFR-12 | Office authorization shall be enforced server-side; hiding a ticket or field in the interface alone shall not count as access control. Tests shall cover list queries, direct reads and writes, REST/RPC calls, search, reports/exports, comments, attachments/downloads, direct assignment, unassigned tickets, and approved administrative exceptions. |
+| NFR-13 | The office field on a ticket shall be stamped and validated by the server. Its field permission level and Helpdesk ticket-template visibility shall match an approved decision about customer visibility; template visibility alone shall not be treated as API protection. |
+| NFR-14 | Before enabling more than one office, the institution shall approve and apply a policy for existing tickets that have no CBSUA Service Office classification, unassigned/teamless tickets, and other records that predate office routing. |
 
 ## 7. Conceptual ticket lifecycle
 
@@ -184,7 +187,7 @@ stateDiagram-v2
 
 ## 8. Phase 1 acceptance criteria
 
-Phase 1 is accepted when all Must requirements applicable to ICT pass documented tests, including:
+Phase 1 is accepted when all Must requirements applicable to ICT pass documented tests and their blocking open questions have approved decisions. The clean-Site install is only one part of acceptance; it does not replace role-based security checks or migration planning. Acceptance includes:
 
 1. A customer can submit an ICT ticket through the approved intake channel.
 2. The ticket receives a unique reference and appears in the ICT queue.
@@ -199,12 +202,16 @@ Phase 1 is accepted when all Must requirements applicable to ICT pass documented
 11. SLA and notification behavior matches the approved ICT configuration.
 12. Backup and restore procedures are documented and tested.
 13. The office onboarding procedure is documented for future expansion.
+14. Native Helpdesk team restriction settings and exceptions (teamless ticket visibility, directly assigned users, teams that ignore restrictions, and administrative roles) are checked against the approved access matrix.
+15. Customer portal access is tested for individual contacts and customer managers under the selected Helpdesk version.
+16. The visibility and API exposure of the CBSUA Service Office field matches the approved customer/internal classification policy.
+17. Existing unclassified tickets are either backfilled or explicitly excluded from cross-office access before office expansion.
 
 ## 9. Assumptions and open questions
 
 | ID | Question / assumption | Required decision |
 |---|---|---|
-| OQ-01 | Will customers submit tickets anonymously, through registered accounts, or both? | Approve customer identity and portal access policy |
+| OQ-01 | Will customers submit tickets anonymously, through registered accounts, or both? Which contacts in one customer organization may view another contact's tickets? | Approve identity, requester-only vs customer-manager access, and portal policy for the pinned Helpdesk version |
 | OQ-02 | Is email intake required for Phase 1, or is portal intake sufficient? | Confirm intake channels |
 | OQ-03 | What ICT categories and subcategories are required? | ICT stakeholder workshop |
 | OQ-04 | What priority definitions and response/resolution targets apply? | ICT service owner approval |
@@ -213,8 +220,12 @@ Phase 1 is accepted when all Must requirements applicable to ICT pass documented
 | OQ-07 | Are there separate working calendars, holidays, or shifts? | Approve ICT service calendar |
 | OQ-08 | What customer data and attachments may be collected and retained? | Privacy and records review |
 | OQ-09 | Which Frappe Framework and Helpdesk versions will be pinned? | Technical compatibility validation |
-| OQ-10 | Are office-level restrictions achievable with native Helpdesk permissions, or is a small extension required? | Permission proof-of-concept and tests |
+| OQ-10 | Can Helpdesk's native `Restrict tickets by Team` setting meet the approved office access matrix, including directly assigned agents, teams that ignore restrictions, and unassigned tickets; or is a small extension required? | Test native HD Settings and role exceptions first; add an extension only for a demonstrated gap |
 | OQ-11 | Is physical walk-in token queueing required in a later project phase? | Separate scope decision |
+| OQ-12 | Should customers be allowed to read the responsible CBSUA Service Office on their tickets? | The current custom field is at Helpdesk permlevel 7, which current Helpdesk guidance documents as readable by customers and agents; use agent-only level 8 if office classification is internal, then configure custom agent-role access |
+| OQ-13 | What is the disposition of existing tickets without a CBSUA office, native team, or other office classification when office isolation is enabled? | Approve and test a backfill, exclusion, or other migration policy before multi-office rollout |
+| OQ-14 | Which named platform administrators or central support staff may intentionally access tickets across offices? | Approve least-privilege exceptions and test administrator, Agent Manager, multi-team, and Helpdesk restriction-override behavior |
+| OQ-15 | What notification channels/events and measurable service objectives (availability, response time, expected ticket volume, backup RPO/RTO) are required for Phase 1? | Set and approve operational targets before production acceptance; verify email and notification dependencies |
 
 ## 10. Requirement traceability
 
@@ -224,11 +235,11 @@ Implementation tasks and tests should reference these requirement IDs. A require
 
 | Requirement | Current implementation | Status |
 |---|---|---|
-| FR-08 | `CBSUA Service Office` plus the protected `cbsua_service_office` field on native `HD Ticket` | Implemented and migrated on the current development Site; clean-Site verification pending |
+| FR-08 | `CBSUA Service Office` plus `cbsua_service_office` on native `HD Ticket`, mapped one-to-one to an approved native `HD Team` | Implemented and migrated on the current development Site; field is currently permission level 7, so customer visibility remains an explicit open decision; clean-Site verification pending |
 | FR-09 | Office controller prevents future offices from being activated in M1 | Implemented and migrated; clean-Site verification pending |
 | FR-10 | One office catalogue maps offices to native Helpdesk Teams | Schema and mapping guard implemented; expansion not enabled |
 | FR-11 | New tickets are stamped with the sole active intake office and its native team | Implemented fail-closed; ICT team mapping is not configured |
 | FR-12 | Native `HD Ticket.agent_group` remains the team assignment field | Native capability reused; team/agent setup pending |
-| FR-36 / NFR-03 / NFR-04 / OQ-10 | Additional CBSUA list-query and document permission hooks | Implemented and migrated on the current development Site; security tests and review pending, not proven |
+| FR-36 / NFR-03 / NFR-04 / NFR-12 / OQ-10 / OQ-13 / OQ-14 | Native Helpdesk team restrictions plus CBSUA list-query and document permission hooks | Additional hooks are implemented and migrated on the current development Site; they allow untagged legacy tickets under native policy. Native exception behavior, security tests, legacy handling, and review remain pending, not proven |
 
-All other functional requirements remain subject to approved configuration, validation, and stakeholder acceptance. The SRS does not define enough policy to implement ICT categories, required fields, priority targets, workflow transitions, staff scope, working calendars, or customer identity rules; resolve OQ-01 through OQ-08 before configuring those items. The app currently adds only the CBSUA Service Office custom DocType and one custom field to native HD Ticket. It deliberately does not duplicate Helpdesk tickets, teams, users/agents, ticket types, priorities, customers, or service-level agreements.
+All other functional requirements remain subject to approved configuration, validation, and stakeholder acceptance. The SRS does not define enough policy to implement ICT categories, required fields, priority targets, workflow transitions, staff scope, working calendars, notification channels, or customer identity rules; resolve the relevant open questions before configuring those items. Frappe's `permission_query_conditions` only constrains `get_list`; it does not constrain `get_all`, and the Helpdesk UI/template visibility controls are distinct from API field permissions. The app currently adds only the CBSUA Service Office custom DocType and one custom field to native HD Ticket. It deliberately does not duplicate Helpdesk tickets, teams, users/agents, ticket types, priorities, customers, or service-level agreements.
