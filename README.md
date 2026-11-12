@@ -2,7 +2,7 @@
 
 CBSUA-specific extension app for [Frappe Helpdesk](https://github.com/frappe/helpdesk).
 
-> **Current status:** starter scaffold. This repository contains the installable CBSUA Frappe app and the instructions to set up a complete local development environment. The app does not replace Frappe Helpdesk and does not yet add custom ticket workflows or office-routing logic.
+> **MVP-1 status:** the branch adds the CBSUA office catalogue, ICT-only activation gate, server-managed ticket classification/routing, preliminary team-scope permission hooks, and safe native brand-name defaults. This is an implementation baseline only: clean-site migration, integration tests, and end-to-end authorization validation remain outstanding. See [MVP-1 implementation status](docs/MVP-1-implementation-status.md).
 
 ## 1. What you are installing
 
@@ -12,7 +12,7 @@ The complete system consists of three Frappe applications:
 |---|---|---|
 | Frappe Framework | The platform that runs the site, database-backed apps, users, and permissions | [frappe/frappe](https://github.com/frappe/frappe) |
 | Frappe Helpdesk | The actual ticketing system, including agent and customer interfaces | [frappe/helpdesk](https://github.com/frappe/helpdesk) |
-| CBSUA Helpdesk | This repository; reserved for CBSUA-specific configuration and extensions | [AgeReapor/cbsua-helpdesk-app](https://github.com/AgeReapor/cbsua-helpdesk-app) |
+| CBSUA Helpdesk | This repository; CBSUA-specific configuration and extensions | [AgeReapor/cbsua-helpdesk-app](https://github.com/AgeReapor/cbsua-helpdesk-app/tree/mvp-1) |
 
 Frappe applications are installed into a **site**. A **Bench** is the local development environment that holds the framework, applications, and one or more sites. You do not need to know Git branch terminology to follow the recommended setup below; the exact choices are already made for you.
 
@@ -31,7 +31,7 @@ For a new environment, use the supported **Frappe 16** release line. The Frappe 
 |---|---|---|
 | Frappe Framework | `version-16` | Supported Frappe 16 release line |
 | Frappe Helpdesk | `version-16` | Matches Frappe Framework `version-16` |
-| CBSUA Helpdesk | `develop` | This project scaffold currently lives on this repository branch |
+| CBSUA Helpdesk | `mvp-1` | MVP implementation branch for the current milestone |
 | Telephony dependency | Default branch selected by Bench | Required by Frappe Helpdesk; fetched separately below |
 
 **Do not choose `develop` for Frappe Framework or Frappe Helpdesk for the normal setup.** Those are moving development branches and must be used together only for deliberate experimental work. The Helpdesk project's published compatibility matrix is:
@@ -154,8 +154,8 @@ bench get-app https://github.com/frappe/telephony
 # Install Frappe Helpdesk from its matching Frappe 16 branch.
 bench get-app --branch version-16 https://github.com/frappe/helpdesk
 
-# Install the CBSUA extension from this project's develop branch.
-bench get-app --branch develop https://github.com/AgeReapor/cbsua-helpdesk-app
+# Install the CBSUA extension from the MVP-1 branch.
+bench get-app --branch mvp-1 https://github.com/AgeReapor/cbsua-helpdesk-app
 ```
 
 **What those commands mean:**
