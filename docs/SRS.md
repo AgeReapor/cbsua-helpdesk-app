@@ -164,7 +164,7 @@ Priority convention: **Must** = required for the relevant phase; **Should** = de
 | NFR-10 | Administrative and ticket-processing activities shall be auditable to the extent supported by the platform and configured logging. |
 | NFR-11 | Production deployment shall include monitoring, backup, restore testing, and documented operational ownership. |
 | NFR-12 | Office authorization shall be enforced server-side; hiding a ticket or field in the interface alone shall not count as access control. Tests shall cover list queries, direct reads and writes, REST/RPC calls, search, reports/exports, comments, attachments/downloads, direct assignment, unassigned tickets, and approved administrative exceptions. |
-| NFR-13 | The office field on a ticket shall be stamped and validated by the server. Its field permission level and Helpdesk ticket-template visibility shall match an approved decision about customer visibility; template visibility alone shall not be treated as API protection. |
+| NFR-13 | The office field on a ticket shall be stamped and validated by the server, and clients shall not be able to set or change the classification through REST/RPC requests. Its field permission level and Helpdesk ticket-template visibility shall match an approved decision about customer visibility; template visibility alone shall not be treated as API protection. |
 | NFR-14 | Before enabling more than one office, the institution shall approve and apply a policy for existing tickets that have no CBSUA Service Office classification, unassigned/teamless tickets, and other records that predate office routing. |
 
 ## 7. Conceptual ticket lifecycle
@@ -206,6 +206,7 @@ Phase 1 is accepted when all Must requirements applicable to ICT pass documented
 15. Customer portal access is tested for individual contacts and customer managers under the selected Helpdesk version.
 16. The visibility and API exposure of the CBSUA Service Office field matches the approved customer/internal classification policy.
 17. Existing unclassified tickets are either backfilled or explicitly excluded from cross-office access before office expansion.
+18. New tickets receive their office/team assignment server-side; attempts to set an office on an unclassified ticket or change a tagged ticket's office/team through REST/RPC are rejected.
 
 ## 9. Assumptions and open questions
 
@@ -235,10 +236,10 @@ Implementation tasks and tests should reference these requirement IDs. A require
 
 | Requirement | Current implementation | Status |
 |---|---|---|
-| FR-08 | `CBSUA Service Office` plus `cbsua_service_office` on native `HD Ticket`, mapped one-to-one to an approved native `HD Team` | Implemented and migrated on the current development Site; field is currently permission level 7, so customer visibility remains an explicit open decision; clean-Site verification pending |
+| FR-08 | `CBSUA Service Office` plus server-managed `cbsua_service_office` on native `HD Ticket`, mapped one-to-one to an approved native `HD Team` | Implemented in source; server prevents client-set or changed office classification; field is currently permission level 7, so customer visibility remains an explicit open decision; clean-Site verification pending |
 | FR-09 | Office controller prevents future offices from being activated in M1 | Implemented and migrated; clean-Site verification pending |
 | FR-10 | One office catalogue maps offices to native Helpdesk Teams | Schema and mapping guard implemented; expansion not enabled |
-| FR-11 | New tickets are stamped with the sole active intake office and its native team | Implemented fail-closed; ICT team mapping is not configured |
+| FR-11 | New tickets are stamped with the sole active intake office and its native team | Implemented fail-closed; a clean install keeps ICT intake disabled until an enabled team is mapped; site verification pending |
 | FR-12 | Native `HD Ticket.agent_group` remains the team assignment field | Native capability reused; team/agent setup pending |
 | FR-36 / NFR-03 / NFR-04 / NFR-12 / OQ-10 / OQ-13 / OQ-14 | Native Helpdesk team restrictions plus CBSUA list-query and document permission hooks | Additional hooks are implemented and migrated on the current development Site; they allow untagged legacy tickets under native policy. Native exception behavior, security tests, legacy handling, and review remain pending, not proven |
 

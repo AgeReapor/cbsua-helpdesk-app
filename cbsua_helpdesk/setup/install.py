@@ -31,8 +31,8 @@ DEFAULT_OFFICES = (
         "office_name": "ICT Office",
         "phase": "Phase 1",
         "is_active": 1,
-        "allow_customer_intake": 1,
-        "description": "Initial operational office for Phase 1.",
+        "allow_customer_intake": 0,
+        "description": "Initial Phase 1 office. Enable intake after mapping an approved, enabled Helpdesk Team.",
     },
     {
         "office_code": "REGISTRAR",

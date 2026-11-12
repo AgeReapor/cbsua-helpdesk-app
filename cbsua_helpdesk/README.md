@@ -9,9 +9,9 @@ This directory is the installable Python/Frappe application package for CBSUA-sp
 This app currently owns:
 - The `CBSUA Service Office` configuration DocType.
 - Safe, additive seed defaults for ICT, Registrar, Admissions, and Cashier.
-- The Phase 1 guard that permits only ICT to be active/intake-enabled.
+- The Phase 1 guard that permits only ICT to be active/intake-enabled and requires an enabled mapped team before intake is enabled.
 - A server-stamped, read-only `cbsua_service_office` custom field on native `HD Ticket` (currently permission level 7; customer visibility is an open policy decision).
-- Fail-closed routing of new tickets to the single active office's mapped native Helpdesk Team.
+- Fail-closed routing of new tickets to the single active office's mapped native Helpdesk Team; server-side immutability for office classification after creation.
 - Additional office-aware list and direct-document checks for CBSUA-tagged tickets.
 - Native Helpdesk branding defaults in the `HD Settings` singleton, filled only when those fields are blank.
 - CBSUA-owned public image and CSS assets.
@@ -43,7 +43,7 @@ Frappe Helpdesk remains authoritative for tickets, teams, agents, customer porta
 | `public/css/cbsua_helpdesk.css` | Provisional design-system token overrides for Helpdesk Vue |
 | `cbsua_helpdesk/workspace/cbsua_helpdesk/` | Standard System Manager Workspace with office catalogue shortcut |
 | `../scripts/integrate_helpdesk_branding.py` | Guarded, repeatable Helpdesk v16 stylesheet integration |
-| `../tests/` | Frappe app tests for office defaults, branding, lifecycle registration, repeatability, and schema drift |
+| `../tests/` | Frappe app tests for office defaults, branding, lifecycle registration, repeatability, schema drift, and server-managed routing |
 
 Keep comments in internal files current when changing behavior. Every migration should be safe to run more than once and must not silently overwrite an administrator's configured settings.
 
@@ -53,14 +53,14 @@ The migration seeds the following records when they do not already exist:
 
 | Code | Phase | Active | Customer intake |
 |---|---|---:|---:|
-| ICT | Phase 1 | Yes | Yes |
+| ICT | Phase 1 | Yes | No, until an enabled Helpdesk Team is mapped |
 | REGISTRAR | Future | No | No |
 | ADMISSIONS | Future | No | No |
 | CASHIER | Future | No | No |
 
-Existing records are not overwritten during migration. The DocType controller rejects activating a non-ICT office and rejects intake for an inactive office. A native Helpdesk Team can map to only one office; mapped teams must exist and be enabled.
+Existing records are not overwritten during migration. The DocType controller rejects activating a non-ICT office, rejects intake for an inactive office, and requires ICT to map an enabled native Helpdesk Team before intake is enabled. A native Helpdesk Team can map to only one office.
 
-These flags are catalogue/routing configuration, not ticket authorization. The app does not create a team or provision its users. New ticket creation requires exactly one active intake office with a mapped, enabled native Helpdesk Team. The current site has no ICT team mapping; configure the approved ICT team and roster before trying ticket intake. Do not map ICT to the existing Product Experts or Billing teams. The route hook stamps the office/team and the office permission hooks add CBSUA-specific list and direct-document checks. Native Helpdesk checks continue to apply to tickets outside CBSUA scope. Treat the authorization implementation as unverified until the test cases in `docs/architecture.md` and the SRS pass.
+These flags are catalogue/routing configuration, not ticket authorization. The app does not create a team or provision its users. A new installation seeds ICT as active but with intake disabled. New ticket creation requires exactly one active intake office with a mapped, enabled native Helpdesk Team. Map the approved ICT team before enabling intake; do not map ICT to the existing Product Experts or Billing teams. The route hook stamps the office/team, prevents client-side changes to the office classification, and the office permission hooks add CBSUA-specific list and direct-document checks. Untagged legacy tickets remain unclassified. Native Helpdesk checks continue to apply to tickets outside CBSUA scope. Treat the authorization implementation as unverified until the test cases in `docs/architecture.md` and the SRS pass.
 
 ## 4. Native Helpdesk branding defaults
 
@@ -118,7 +118,8 @@ Then restart `bench start` and hard-refresh the browser.
 ### Expected checks
 
 - [ ] `CBSUA Service Office` contains the four expected records.
-- [ ] ICT is active and intake-enabled.
+- [ ] ICT is active and intake-disabled on a clean install until its approved, enabled Helpdesk Team is mapped.
+- [ ] Enabling ICT intake without a mapped, enabled Helpdesk Team is rejected.
 - [ ] Registrar, Admissions, and Cashier remain inactive and intake-disabled.
 - [ ] `HD Settings` has the CBSUA brand defaults if those fields were blank before migration.
 - [ ] A pre-existing non-empty HD Settings value survives a subsequent migration.

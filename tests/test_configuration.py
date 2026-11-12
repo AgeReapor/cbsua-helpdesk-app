@@ -1,8 +1,8 @@
 """Tests for the M1 CBSUA configuration foundation.
 
-These tests intentionally cover only the office catalogue's safe defaults and
-activation guard. They do not claim that Helpdesk ticket-level isolation has
-been implemented or proven; that is a separate release gate in the SRS.
+These tests cover safe office defaults and activation guardrails. They do not
+claim that Helpdesk ticket-level isolation has been implemented or proven;
+that is a separate release gate in the SRS.
 """
 
 from unittest.mock import MagicMock, call, patch
@@ -35,9 +35,9 @@ class TestCBSUAConfiguration(FrappeTestCase):
         )
 
     def test_default_office_catalogue_is_seeded(self):
-        """Migrations seed all four offices while exposing only ICT intake."""
+        """Migrations seed all offices; ICT intake waits for team setup."""
         expected = {
-            "ICT": (1, 1),
+            "ICT": (1, 0),
             "REGISTRAR": (0, 0),
             "ADMISSIONS": (0, 0),
             "CASHIER": (0, 0),
@@ -201,6 +201,14 @@ class TestCBSUAConfiguration(FrappeTestCase):
         office = frappe.get_doc("CBSUA Service Office", "ICT")
         office.is_active = 0
         office.allow_customer_intake = 1
+        with self.assertRaises(frappe.ValidationError):
+            office.validate()
+
+    def test_ict_intake_requires_a_mapped_helpdesk_team(self):
+        office = frappe.get_doc("CBSUA Service Office", "ICT")
+        office.is_active = 1
+        office.allow_customer_intake = 1
+        office.helpdesk_team = None
         with self.assertRaises(frappe.ValidationError):
             office.validate()
 

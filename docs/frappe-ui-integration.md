@@ -155,7 +155,7 @@ No custom ticket action is added in this M1 change because the current SRS does 
 
 ### M1 configuration
 - [ ] Run CBSUA app tests.
-- [ ] Confirm ICT remains the only active office and only ICT intake is enabled.
+- [ ] Confirm ICT is the only office eligible for activation and intake, and intake remains disabled until an enabled team is mapped.
 - [ ] Confirm future offices remain disabled.
 - [ ] Do not infer ticket isolation from the office catalogue flags.
 

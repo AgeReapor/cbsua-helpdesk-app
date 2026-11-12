@@ -117,15 +117,22 @@ Record the result for each check; do not mark a check complete solely because th
 - [ ] `bench --site cbsua-helpdesk-site-test.localhost list-apps` lists the four expected apps.
 - [ ] The System Manager workspace for CBSUA Helpdesk is present.
 - [ ] The `CBSUA Service Office` DocType opens in Desk.
-- [ ] ICT, Registrar, Admissions, and Cashier defaults exist; only ICT is active and intake-enabled.
-- [ ] `HD Ticket.cbsua_service_office` exists and is read-only at permission level 7.
+- [ ] ICT, Registrar, Admissions, and Cashier defaults exist; ICT alone is active, and intake is initially disabled until a test/approved Helpdesk Team is mapped.
+- [ ] `HD Ticket.cbsua_service_office` exists, is read-only in Desk, and is assigned by server logic.
 - [ ] The CBSUA logo and favicon asset URLs respond successfully.
 - [ ] The `/helpdesk` and `/desk` pages render on the new Site.
 - [ ] The existing `cbsua-helpdesk.localhost` Site still resolves to its original data.
 
 ### Routing and permissions
 
-The clean install does not create an ICT Helpdesk Team, map one to ICT, or provision an agent roster. Do not map ICT to Product Experts or Billing and do not add fake users. Ticket intake is expected to fail closed until CBSUA approves and configures the correct Helpdesk Team and agents.
+The clean install does not create an ICT Helpdesk Team, map one to ICT, or provision an agent roster. For an isolated functional routing check, configure a clearly test-only native team in the fresh Site:
+
+1. In Desk, create `HD Team` named `CBSUA ICT Support (site-test)`. Leave its roster empty, keep `ignore_restrictions` off, and do not reuse Product Experts or Billing.
+2. Open **CBSUA Helpdesk → CBSUA Service Office**, edit ICT, set **Helpdesk Team** to the test team, and enable **Allow Customer Intake**.
+3. Save. The app should reject enabling intake without a mapped, enabled team. New ticket creation should stamp ICT and the test team server-side.
+4. Try changing or clearing `cbsua_service_office` on an existing ticket through a direct API request; the server should reject it. An unclassified legacy ticket must stay unclassified.
+
+This empty test team verifies configuration and routing only. It does not prove that agents can process tickets or that office isolation works. For access-control evidence, use separately approved non-admin test accounts and mapped teams; do not count Administrator access as an isolation test.
 
 Treat office isolation as unverified until separate agent accounts are used to test list view, direct document access, search, reports, comments, attachments, assignment, and reassignment against tickets from multiple offices. A successful app test suite is not proof of end-to-end authorization.
 

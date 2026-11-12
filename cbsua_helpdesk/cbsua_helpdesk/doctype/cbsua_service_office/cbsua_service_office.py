@@ -34,6 +34,11 @@ class CBSUAServiceOffice(Document):
                 _("Only ICT may be activated in M1. Future offices require an approved onboarding release.")
             )
 
+        if self.allow_customer_intake and not self.helpdesk_team:
+            frappe.throw(
+                _("Map an enabled Helpdesk Team to ICT before enabling customer intake.")
+            )
+
         if self.helpdesk_team:
             duplicate = frappe.db.exists(
                 "CBSUA Service Office",
