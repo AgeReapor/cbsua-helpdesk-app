@@ -1,0 +1,9 @@
+:root {
+  --cbsua-brand-primary: #174B35;
+  --cbsua-brand-primary-hover: #103B2A;
+  --cbsua-brand-primary-subtle: #EAF2ED;
+  --cbsua-brand-accent: #C6A04A;
+  --cbsua-brand-accent-subtle: #F6F0E1;
+  --cbsua-ink: #29382F;
+}
+body { accent-color: var(--cbsua-brand-primary); }
