@@ -52,8 +52,10 @@ RPM distinguishes Result (what outcome is wanted), Purpose (why it matters) and 
 - [CBSUA Frappe fork](https://github.com/AgeReapor/cbsua-app-frappe) — framework source and Python metadata.
 - [CBSUA Helpdesk fork](https://github.com/AgeReapor/cbsua-app-helpdesk) — Helpdesk source and compatibility metadata.
 - [CBSUA Telephony fork](https://github.com/AgeReapor/cbsua-app-telephony) — Telephony source and dependency metadata.
-- [Tony Robbins — RPM Planner FAQs](https://go.tonyrobbins.com/hubfs/PDF/WP-Files/RPM-Planner-FAQs-min.pdf) — Result/Purpose/MAP distinction and example.
-- [Tony Robbins — Rapid Planning Method](https://www.tonyrobbins.com/blog/make-a-massive-action-plan-map) — RPM planning reference.
+- [Tony Robbins — requested Rapid Planning Method article](https://www.tonyrobbins.com/blog/tony-robbins-rapid-planning-method-rpm) — user-provided reference; verify current redirect/availability when revisiting.
+- [Tony Robbins — RPM Planner FAQs](https://go.tonyrobbins.com/hubfs/PDF/WP-Files/RPM-Planner-FAQs-min.pdf) — explains the Result/Purpose distinction and describes the MAP as a flexible menu of actions.
+- [Tony Robbins — Stop reacting and start owning your day](https://www.tonyrobbins.com/blog/stop-reacting-and-start-owning-your-day) — current official article summarizing the three RPM questions.
+- [Tony Robbins — Rapid Planning Method](https://www.tonyrobbins.com/events/rapid-planning-method) — official RPM overview.
 
 ## 6. Limitations
 
