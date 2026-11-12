@@ -9,8 +9,8 @@ def hd_ticket_query(user):
     escaped_user = frappe.db.escape(user)
     table = "`tabHD Ticket`"
     return (
-        f"({table}.cbsua_service_office IS NULL OR {table}.cbsua_service_office = '') "
-        f"OR ({table}.agent_group IN (SELECT parent FROM `tabHD Team Member` WHERE user = {escaped_user}))"
+        f"(({table}.cbsua_service_office IS NULL OR {table}.cbsua_service_office = '') "
+        f"OR ({table}.agent_group IN (SELECT parent FROM `tabHD Team Member` WHERE user = {escaped_user})))"
     )
 
 def hd_ticket_has_permission(doc, user=None, permission_type=None):
