@@ -430,9 +430,11 @@ migration steps, tests, and rollback. The Helpdesk integration instructions
 are in [helpdesk/M1-setup.md](helpdesk/M1-setup.md).
 
 After pulling the develop branch, run `bench migrate`, build the CBSUA app
-assets, clear caches, and run the app tests. M1 does not yet implement ticket
-routing, HD Team provisioning, or office-level ticket isolation. ICT is the
-only active office record; Registrar, Admissions, and Cashier remain disabled.
+assets, clear caches, and run the app tests. The M1 MVP bootstrap now provisions the native ICT team, maps it to the ICT office,
+enables ICT intake, and seeds provisional ICT categories and queue views.
+Add staff with `cbsua_helpdesk.setup.ict.add_ict_staff` (see the M1 doc). Office-level
+isolation still needs live-Site validation. ICT is the only active office;
+Registrar, Admissions, and Cashier remain disabled.
 
 ## 11. M0 local baseline — current implementation
 

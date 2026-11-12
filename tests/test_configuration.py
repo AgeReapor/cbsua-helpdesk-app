@@ -35,9 +35,9 @@ class TestCBSUAConfiguration(FrappeTestCase):
         )
 
     def test_default_office_catalogue_is_seeded(self):
-        """Migrations seed all offices; ICT intake waits for team setup."""
+        """Migrations seed all offices; ICT is mapped with intake on, others stay off."""
         expected = {
-            "ICT": (1, 0),
+            "ICT": (1, 1),
             "REGISTRAR": (0, 0),
             "ADMISSIONS": (0, 0),
             "CASHIER": (0, 0),

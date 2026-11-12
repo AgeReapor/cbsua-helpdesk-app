@@ -32,7 +32,7 @@ DEFAULT_OFFICES = (
         "phase": "Phase 1",
         "is_active": 1,
         "allow_customer_intake": 0,
-        "description": "Initial Phase 1 office. Enable intake after mapping an approved, enabled Helpdesk Team.",
+        "description": "Initial Phase 1 office. Mapped to the native CBSUA ICT Support team with intake enabled on first setup.",
     },
     {
         "office_code": "REGISTRAR",

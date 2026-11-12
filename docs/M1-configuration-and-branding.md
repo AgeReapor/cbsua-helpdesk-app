@@ -1,6 +1,6 @@
 # M1 — CBSUA configuration foundation and branding
 
-**Status:** Native HD Settings branding, repeatable office seeding, a System Manager Workspace, and a version-pinned Helpdesk v16 theme entry are implemented. The app also contains office-to-team routing and scoped ticket permission hooks. ICT intake stays disabled until an enabled native Helpdesk Team is mapped. The team mapping and roster are not configured, and routing/isolation have not passed end-to-end verification; M1 is not operationally accepted. Palette values follow the supplied design-system proposal and remain provisional pending official brand validation.
+**Status (MVP build):** The ICT bootstrap is implemented: on install/migrate the app creates the native `CBSUA ICT Support` team, maps it to ICT, enables ICT intake, and seeds provisional ICT categories and queue views. These defaults are provisional and not tested on a live Site yet. Earlier status: native HD Settings branding, repeatable office seeding, a System Manager Workspace, and a version-pinned Helpdesk v16 theme entry are implemented. The app also contains office-to-team routing and scoped ticket permission hooks. ICT intake stays disabled until an enabled native Helpdesk Team is mapped. The team mapping and roster are not configured, and routing/isolation have not passed end-to-end verification; M1 is not operationally accepted. Palette values follow the supplied design-system proposal and remain provisional pending official brand validation.
 
 **Scope:** Institutional identity, office catalogue metadata, and safe Phase 1 defaults.
 
@@ -32,12 +32,33 @@ The implementation covers the office catalogue, an office link on native tickets
 
 | Code | Phase | Active | Customer intake |
 |---|---|---:|---:|
-| ICT | Phase 1 | Yes | No, until a native Helpdesk Team is mapped |
+| ICT | Phase 1 | Yes | Yes, after the ICT bootstrap maps `CBSUA ICT Support` |
 | REGISTRAR | Future | No | No |
 | ADMISSIONS | Future | No | No |
 | CASHIER | Future | No | No |
 
-The controller rejects activation of a non-ICT office, rejects customer intake for an inactive office, and requires an existing enabled native Helpdesk Team before ICT intake can be enabled. A new installation seeds ICT as active with intake disabled until an administrator maps the approved Team. This is a configuration guard, not a replacement for Frappe permissions.
+The controller rejects activation of a non-ICT office, rejects customer intake for an inactive office, and requires an existing enabled native Helpdesk Team before ICT intake can be enabled. A new installation seeds ICT as active, then the ICT bootstrap maps the native ICT team and enables intake; an administrator may change either afterwards. This is a configuration guard, not a replacement for Frappe permissions.
+
+
+## 3a. ICT MVP bootstrap (`cbsua_helpdesk/setup/ict.py`)
+
+Runs from `after_install` and `after_migrate`; every step is additive and idempotent.
+
+| Step | Result | Requirement |
+|---|---|---|
+| `ensure_ict_team` | Native HD Team `CBSUA ICT Support` (Helpdesk also creates its assignment rule) | FR-12, FR-18 |
+| `ensure_ict_office_mapping` | Maps ICT to that team and enables intake, only while no team is mapped; later admin changes are respected | FR-09, FR-11 |
+| `ensure_ict_ticket_types` | Provisional categories: Network & Internet, Account & Password, Hardware & Equipment, Software & Systems, Email & Collaboration, Information System Request, Other ICT Request | FR-04 (OQ-03 pending) |
+| `ensure_ict_views` | Public HD Views: ICT Unassigned Queue, ICT My Tickets, ICT All Open Tickets, ICT SLA At Risk | FR-15, FR-16, FR-20, FR-21, FR-43 |
+
+Onboard staff explicitly (not automatic, no credentials stored):
+
+~~~bash
+bench --site cbsua-helpdesk.localhost execute cbsua_helpdesk.setup.ict.add_ict_staff \
+  --kwargs '{"email": "agent@cbsua.edu.ph", "manager": 0}'
+~~~
+
+The user must already exist (invite via Helpdesk). Set `"manager": 1` to also grant Agent Manager. SLA targets and calendars remain on Helpdesk's native default until OQ-04/OQ-07 are decided.
 
 ## 4. Ticket association and routing
 

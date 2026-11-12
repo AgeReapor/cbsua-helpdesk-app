@@ -150,3 +150,14 @@ Future offices cannot be activated until onboarding and isolation tests pass.
 **Rationale:** The SRS identifies service office as CBSUA-specific metadata while Helpdesk already owns ticketing and team membership. Reusing the native records avoids split-brain data and makes office routing rely on the installed Helpdesk team model.
 
 **Consequences:** The ICT team and approved roster must be configured before ticket intake works. The current local site has only Product Experts and Billing teams; neither is an ICT substitute. Frappe v16 permission hooks are additive: the CBSUA controller hook must return true for out-of-scope tickets so Helpdesk's native ticket hook can decide access. Full office isolation remains unproven until the SRS access cases pass.
+
+
+## ADR-015 — Auto-provision the ICT MVP baseline with provisional defaults
+
+**Status:** Accepted for the MVP; categories and SLA pending ICT approval
+
+**Decision:** Seed the ICT team, office mapping, intake flag, provisional categories, and public queue views from `after_install`/`after_migrate`. Staff onboarding stays an explicit command (`add_ict_staff`). SLA targets and calendars are not customised.
+
+**Rationale:** The MVP needs a working ICT intake-to-queue path without manual setup. Every step is additive, so administrator changes are never overwritten.
+
+**Consequences:** Categories are placeholders for OQ-03. Office isolation, customer policy (OQ-01), SLA (OQ-04/07), and notifications still need validation on a live Site.
