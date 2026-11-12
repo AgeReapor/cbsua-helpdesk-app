@@ -13,6 +13,10 @@ The deployment strategy is phased:
 
 The platform should be multi-office capable in its design, while only ICT is enabled as an operational destination during Phase 1.
 
+## Architecture handoff
+
+The hosting architecture has transitioned to the CBSUA Pilot stack. The previous Bench-centered setup is historical and is not the target local workflow. Start with the [Pilot architectural handoff](handoff/README.md), including its compatibility blockers and progressive RPM gates.
+
 ## Documents
 
 | Document | Purpose |
