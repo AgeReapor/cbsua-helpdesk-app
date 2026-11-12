@@ -223,15 +223,22 @@ The office field is currently created at permission level 7. Current Helpdesk fi
 
 ```mermaid
 flowchart TD
-    Request["Authenticated staff request"]
-    Role["Evaluate Helpdesk role"]
-    Team["Evaluate team membership"]
-    Scope["Evaluate ticket office/team scope"]
+    Request["Customer or staff request"]
+    Actor{"Actor type / approved role?"}
+    Customer["Apply native Helpdesk requester and customer-manager policy"]
+    Role["Evaluate staff role and HD Agent record"]
+    Team["Apply native team, assignment, and restriction settings"]
+    Scope["Apply CBSUA office/team scope to tagged tickets"]
+    Global["Approved platform-wide administrator exception"]
     Allowed{"Authorized?"}
     Permit["Permit requested action"]
     Deny["Deny access and record as appropriate"]
 
-    Request --> Role --> Team --> Scope --> Allowed
+    Request --> Actor
+    Actor -->|Customer| Customer --> Allowed
+    Actor -->|Agent or manager| Role --> Team --> Scope --> Allowed
+    Actor -->|Approved global administrator| Global --> Permit
+    Scope --> Allowed
     Allowed -->|"Yes"| Permit
     Allowed -->|"No"| Deny
 ```

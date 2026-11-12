@@ -26,6 +26,7 @@ The platform should be multi-office capable in its design, while only ICT is ena
 | [M1 Configuration and Branding](M1-configuration-and-branding.md) | Office catalogue, native Helpdesk branding, tests, and rollback |
 | [Fresh Site test runbook](site-test/README.md) | Clean Frappe Site creation, app installation, migration, browser checks, tests, and cleanup |
 | [Frappe UI Integration](frappe-ui-integration.md) | Frappe UI compatibility findings, CBSUA design adaptation, Custom Actions guidance, and frontend verification plan |
+| [Agent Skills Review](agent-skills.md) | Installed Frappe skills, risk findings, and project rules for using third-party agent guidance |
 
 ## Documentation conventions
 
