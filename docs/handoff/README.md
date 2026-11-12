@@ -22,7 +22,7 @@ Pilot is not a replacement ticketing application. Frappe is not the product work
 
 | Document | Purpose |
 |---|---|
-| [Target architecture](architecture.md) | System boundaries, deployment layers, data/control flows |
+| [Target architecture](architecture.md) | Pilot hosting boundaries, deployment layers and data/control flows |\n| [Software Requirements Specification](../SRS.md) | Problem-first institutional requirements, acceptance criteria and open decisions |\n| [C4 and UML architecture](../architecture.md) | Restored C4 views, ERD, UML domain model, lifecycle and sequence diagrams |\n| [Requirements traceability](../traceability-matrix.md) | CP → CN → FR/NFR → architecture → verification mapping |
 | [Repository responsibilities](repository-responsibilities.md) | Ownership, allowed changes, dependency direction |
 | [Compatibility and dependencies](compatibility-and-dependencies.md) | Observed metadata, compatibility blockers, version policy |
 | [Local development and release](local-development-and-release.md) | Pilot-first developer workflow and promotion model |
