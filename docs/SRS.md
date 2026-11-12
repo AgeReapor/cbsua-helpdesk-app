@@ -153,7 +153,24 @@ The CBSUA Digital Helpdesk is a shared, browser-accessible ticketing service bui
 9. Future office onboarding controls.
 10. CBSUA-specific configuration and extension boundary.
 
-### 4.3 System boundary
+### 4.3 Software glance — capability overview
+
+~~~mermaid
+flowchart LR
+    Requester["Requester"] --> Intake["Submit and track request"]
+    Intake --> Ticket["CBSUA Digital Helpdesk"]
+    Ticket --> Routing["ICT routing and queue"]
+    Routing --> Work["Agent assignment and processing"]
+    Work --> Communication["Replies, clarification and history"]
+    Communication --> Resolution["Resolution and closure"]
+    Ticket --> Reporting["ICT workload and service reporting"]
+    Admin["Platform administrator"] --> Governance["Identity, roles and configuration"]
+    Governance --> Ticket
+~~~
+
+This is a capability-level solution view. Detailed C4 boundaries, containers, components and UML models are maintained in [System architecture](architecture.md).
+
+### 4.4 System boundary
 
 The system boundary and external actors are illustrated in [Architecture §2 — C4 context](architecture.md#2-c4-level-1-system-context). The hosting containers and logical components are in [Architecture §3–4](architecture.md#3-c4-level-2-container-view).
 
