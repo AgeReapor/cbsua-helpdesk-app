@@ -1,0 +1,65 @@
+{
+  "doctype": "DocType",
+  "name": "CBSUA Service Office",
+  "module": "CBSUA Helpdesk",
+  "autoname": "field:office_code",
+  "title_field": "office_name",
+  "track_changes": 1,
+  "fields": [
+    {
+      "fieldname": "office_code",
+      "label": "Office Code",
+      "fieldtype": "Data",
+      "reqd": 1,
+      "unique": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "office_name",
+      "label": "Office Name",
+      "fieldtype": "Data",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "phase",
+      "label": "Release Phase",
+      "fieldtype": "Select",
+      "options": "Phase 1\nFuture",
+      "reqd": 1
+    },
+    {
+      "fieldname": "helpdesk_team",
+      "label": "Helpdesk Team",
+      "fieldtype": "Link",
+      "options": "HD Team"
+    },
+    {
+      "fieldname": "is_active",
+      "label": "Active",
+      "fieldtype": "Check",
+      "default": "0"
+    },
+    {
+      "fieldname": "allow_customer_intake",
+      "label": "Allow Customer Intake",
+      "fieldtype": "Check",
+      "default": "0"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "share": 1,
+      "export": 1,
+      "report": 1
+    }
+  ],
+  "sort_field": "office_code",
+  "sort_order": "ASC",
+  "engine": "InnoDB"
+}
